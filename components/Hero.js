@@ -24,7 +24,7 @@ const Hero = () => {
         </a>
 
         <h1 className="font-extrabold text-4xl lg:text-6xl tracking-tight md:-mb-4">
-          Salesforce maps that don't suck.
+          Salesforce maps that don&#39;t suck.
         </h1>
         <p className="text-lg opacity-80 leading-relaxed">
           Save a shat ton of money by saving your reps time with these dope as hell maps.
