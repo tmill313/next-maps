@@ -1,6 +1,7 @@
 import Image from "next/image";
 import ButtonLead from "./ButtonLead";
 import TestimonialsAvatars from "./TestimonialsAvatars";
+import screenshot from './/../app/map-cluster.png';
 import config from "@/config";
 
 const Hero = () => {
@@ -23,11 +24,10 @@ const Hero = () => {
         </a>
 
         <h1 className="font-extrabold text-4xl lg:text-6xl tracking-tight md:-mb-4">
-          Ship your startup in days, not weeks
+          Salesforce maps that don't suck.
         </h1>
         <p className="text-lg opacity-80 leading-relaxed">
-          The NextJS boilerplate with all you need to build your SaaS, AI tool,
-          or any other web app. From idea to production in 5 minutes.
+          Save a shat ton of money by saving your reps time with these dope as hell maps.
         </p>
         <ButtonLead />
 
@@ -35,11 +35,11 @@ const Hero = () => {
       </div>
       <div className="lg:w-full">
         <Image
-          src="https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80"
+          src={screenshot.src}
           alt="Product Demo"
           className="w-full"
           priority={true}
-          width={500}
+          width={700}
           height={500}
         />
       </div>
