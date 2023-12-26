@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ButtonLead from "./ButtonLead";
 import config from "@/config";
 
 const CTA = () => {
@@ -21,9 +22,7 @@ const CTA = () => {
             section...
           </p>
 
-          <button className="btn btn-primary btn-wide">
-            Get {config.appName}
-          </button>
+          <ButtonLead />
         </div>
       </div>
     </section>
