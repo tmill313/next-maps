@@ -23,6 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme={config.colors.theme} className={font.className}>
       {config.domainName && (
         <head>
+          <meta name="google-site-verification" content="Qx5iQLYtfASM-0arxL66ZXtDSAob61re8bAYyc2nKgw" />
           <PlausibleProvider domain={config.domainName} />
         </head>
       )}
