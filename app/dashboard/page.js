@@ -4,6 +4,7 @@ import ButtonAccount from "@/components/ButtonAccount";
 import ButtonCheckout from "@/components/ButtonCheckout";
 import config from "@/config";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import GoogleMap from "@/components/GoogleMap";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,7 @@ if(user) {
         />
         </div>
         :
-        <div>MAP GOES HERE</div>
+        <GoogleMap />
         }
       </section>
     </main>
