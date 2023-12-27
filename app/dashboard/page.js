@@ -37,8 +37,7 @@ if(user) {
     getUser();
 }
   }, [user]);
-console.log(profile)
-  if(!profile) return
+
 
   return (
     <main className="min-h-screen p-8 pb-24">
