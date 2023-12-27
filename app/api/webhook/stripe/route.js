@@ -14,8 +14,9 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 // See more: https://shipfa.st/docs/features/payments
 export async function POST(req) {
   const body = await req.text();
-
+  console.log('body', body)
   const signature = headers().get("stripe-signature");
+  console.log('signature', signature)
 
   let data;
   let eventType;
@@ -24,6 +25,7 @@ export async function POST(req) {
   // verify Stripe event is legit
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    console.log('event', event)
   } catch (err) {
     console.error(`Webhook signature verification failed. ${err.message}`);
     return NextResponse.json({ error: err.message }, { status: 400 });
@@ -31,7 +33,8 @@ export async function POST(req) {
 
   data = event.data;
   eventType = event.type;
-
+  console.log('data', data)
+  console.log('eventType', eventType)
   // Create a private supabase client using the secret service_role API key
   const supabase = new SupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -44,6 +47,7 @@ export async function POST(req) {
         // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
         // ✅ Grant access to the product
         const session = await findCheckoutSession(data.object.id);
+        console.log('session', session)
 
         const customerId = session?.customer;
         const priceId = session?.line_items?.data[0]?.price.id;
@@ -101,6 +105,7 @@ export async function POST(req) {
       }
 
       case "invoice.paid": {
+        console.log('invoice paid')
         // Customer just paid an invoice (for instance, a recurring payment for a subscription)
         // ✅ Grant access to the product
         const priceId = data.object.lines.data[0].price.id;
