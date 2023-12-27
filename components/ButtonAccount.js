@@ -20,7 +20,6 @@ const ButtonAccount = () => {
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
-
       setUser(data.user);
     };
 
