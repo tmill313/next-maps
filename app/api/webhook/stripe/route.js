@@ -47,7 +47,7 @@ export async function POST(req) {
         // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
         // ✅ Grant access to the product
         const session = await findCheckoutSession(data.object.id);
-        console.log('session', session)
+        console.log('supa', supabase)
 
         const customerId = session?.customer;
         const priceId = session?.line_items?.data[0]?.price.id;
