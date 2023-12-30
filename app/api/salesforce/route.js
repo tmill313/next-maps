@@ -55,7 +55,7 @@ let thisData = qs.stringify({
 });
 
 console.log(thisData)
-axios.post('https://login.salesforce.com/services/oauth2/token', thisData, {  headers: { 
+await axios.post('https://login.salesforce.com/services/oauth2/token', thisData, {  headers: { 
     'Content-Type': 'application/x-www-form-urlencoded', 
     'Cookie': 'BrowserId=wGR2SqIbEe6HWqd8LP5WFA; CookieConsentPolicy=0:0; LSKey-c$CookieConsentPolicy=0:0'
   }})
