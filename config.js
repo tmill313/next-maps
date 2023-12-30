@@ -1,6 +1,9 @@
 import themes from "daisyui/src/theming/themes.js";
 
 const config = {
+  baseURL: process.env.NODE_ENV === "development"
+  ? 'http://http://localhost:3000/'
+  : 'https://next-maps-chi.vercel.app/'
   // REQUIRED
   appName: "BetterMaps",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
