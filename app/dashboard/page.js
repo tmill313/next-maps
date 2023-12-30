@@ -9,62 +9,49 @@ import config from "@/config";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import GoogleMap from "@/components/GoogleMap";
 
+
 export const dynamic = "force-dynamic";
 
 export default function Dashboard() {
   const supabase = createClientComponentClient();
-  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [salesforceAuth, setSalesforceAuth] =useState(null)
   const [isLoading, setIsLoading] = useState(true)
-
+  const [points, setPoints] = useState([])
 
 
   useEffect(() => {
     const getUser = async () => {
       setIsLoading(true)
       const { loading: userLoading, data } = await supabase.auth.getUser()
-      setUser(data.user);
+      let user = data?.user
+
+      const { data: profileData } = await supabase
+      .from("profiles")
+      .select(`*`)
+      .eq("id", user?.id)
+      .single();
+
+      const { data: salesforceData } = await supabase
+      .from("salesforce_auth")
+      .select(`*`)
+      .eq("id", user?.id)
+      .single();
+
+      setProfile(profileData)
+      setSalesforceAuth(salesforceData)
+      setIsLoading(false)
     };
 
     getUser();
   }, [supabase]);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { loading, data: profileData } = await supabase
-      .from("profiles")
-      .select(`*, 
-      salesforce_auth!inner (
-        *
-      )`)
-      .eq("id", user?.id)
-      .single();
-      setProfile(profileData)
-      setIsLoading(false)
-    };
-if(user) {
-    getUser();
-}
-  }, [user]);
 
-  const options = {
-    headers: {
-      Authorization: `Bearer ${profile?.salesforce_auth?.access_token}`,
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      'Access-Control-Allow-Headers': '*',
-    },
-  };
+  
 
-  const getStuff = async () => {
-    try {
-      
-      const res = await axios.post('https://taylormiller-dev-ed.develop.my.salesforce.com/services/data/v59.0/sobjects/Opportunity', {}, options);
-      console.log(res)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+
+ 
+const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query?q=SELECT+id,name,billingAddress+FROM+Account`
 
 
   const salesforceLoginURL = `https://login.salesforce.com/services/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_SALESFORCE_CONSUMER_KEY}&redirect_uri=http://localhost:3000/api/salesforce&response_type=code`
@@ -86,19 +73,19 @@ if(isLoading) return
         />
         </div>
         :
-        !profile?.salesforce_auth?.access_token ? 
+        !salesforceAuth?.access_token ? 
           <div>
           <Link href={salesforceLoginURL}>
             <ButtonGradient title='Connect Salesforce'/>
           </Link>
-        <GoogleMap />
         </div>
       :
       <div>
-        <ButtonGradient title='get stuff' onClick={() => getStuff()}/>
+        <GoogleMap points={points} setPoints={setPoints} salesforceAuth={salesforceAuth}/>
       </div>
         }
       </section>
     </main>
   );
 }
+

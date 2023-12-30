@@ -77,7 +77,8 @@ axios.post('https://login.salesforce.com/services/oauth2/token', thisData, {  he
   const {error} = await supabase
   .from("salesforce_auth")
   .update({
-    access_token: data.access_token
+    access_token: data.access_token,
+    instance_url: data.instance_url
   })
   .eq("id", session?.user?.id);
   console.log(error)
