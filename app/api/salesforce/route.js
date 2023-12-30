@@ -51,7 +51,7 @@ let thisData = qs.stringify({
   'Content_type': 'application/x-www-form-urlencoded',
   'client_id': process.env.NEXT_PUBLIC_SALESFORCE_CONSUMER_KEY,
   'client_secret': process.env.NEXT_PUBLIC_SALESFORCE_CONSUMER_SECRET,
-  'redirect_uri': `${requestUrl.origin}/api/salesforce`
+  'redirect_uri': `${config.baseURL}/api/salesforce`
 });
 
 
