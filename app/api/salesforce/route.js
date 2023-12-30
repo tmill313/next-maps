@@ -54,19 +54,7 @@ let thisData = qs.stringify({
   'redirect_uri': `${thisConfig.baseURL}/api/salesforce`
 });
 
-
-let config = {
-  method: 'post',
-  maxBodyLength: Infinity,
-  url: 'https://login.salesforce.com/services/oauth2/token',
-  headers: { 
-    'Content-Type': 'application/x-www-form-urlencoded', 
-    'Cookie': 'BrowserId=wGR2SqIbEe6HWqd8LP5WFA; CookieConsentPolicy=0:0; LSKey-c$CookieConsentPolicy=0:0'
-  },
-  data : thisData
-};
-console.log(config)
-
+console.log(thisData)
 axios.post('https://login.salesforce.com/services/oauth2/token', thisData, {  headers: { 
     'Content-Type': 'application/x-www-form-urlencoded', 
     'Cookie': 'BrowserId=wGR2SqIbEe6HWqd8LP5WFA; CookieConsentPolicy=0:0; LSKey-c$CookieConsentPolicy=0:0'
@@ -87,7 +75,7 @@ axios.post('https://login.salesforce.com/services/oauth2/token', thisData, {  he
   console.log(error);
 });
 
-return NextResponse.redirect(requestUrl.origin + thisConfig.auth.callbackUrl);
+return NextResponse.redirect(thisConfig.baseURL + thisConfig.auth.callbackUrl);
 } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
