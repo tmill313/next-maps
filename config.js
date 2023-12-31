@@ -3,14 +3,14 @@ import themes from "daisyui/src/theming/themes.js";
 const config = {
   baseURL: process.env.NODE_ENV === "development"
   ? 'http://localhost:3000'
-  : 'https://next-maps-chi.vercel.app',
+  : 'https://www.clickclickpow.click/',
   // REQUIRED
-  appName: "BetterMaps",
+  appName: "Click Click Pow",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
     "Salesforce maps that don't suck.",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
-  domainName: "shipfa.st",
+  domainName: "clickclickpow.click",
   crisp: {
     // Crisp website ID. IF YOU DON'T USE CRISP: just remove this => Then add a support email in this config file (mailgun.supportEmail) otherwise customer support won't work.
     id: "",
