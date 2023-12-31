@@ -14,7 +14,7 @@ import {
 const PartnerFormFields = () => {
     return(
         <div>
-            <FormField
+            {/* <FormField
             control={form.control}
             name="lastModifiedDate"
             render={({ field }) => (
@@ -26,7 +26,7 @@ const PartnerFormFields = () => {
                 <FormMessage />
                 </FormItem>
             )}
-            />
+            /> */}
         </div>
     )
 }

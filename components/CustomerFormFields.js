@@ -14,7 +14,7 @@ import {
 const CustomerFormFields = () => {
     return(
         <div>
-            <FormField
+            {/* <FormField
             control={form.control}
             name="lastModifiedDate"
             render={({ field }) => (
@@ -26,7 +26,7 @@ const CustomerFormFields = () => {
                 <FormMessage />
                 </FormItem>
             )}
-            />
+            /> */}
         </div>
     )
 }

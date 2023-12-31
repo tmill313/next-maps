@@ -75,31 +75,61 @@ export const columns = [
       },
       cell: ({ row }) => {
           const name = row.getValue("Name")
-const FormSchema = z.object({
-  name: z
-    .string()
-    .max(160, {
-      message: "name must not be longer than 30 characters.",
-    }),
-})
-
-  const form = useForm({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-        name: name
-    }
-})
-
-  const onSubmit = (data) => {
-    toast("You changed the following values:",
-    {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-  }
+          const SetForm = () => {
+            const FormSchema = z.object({
+                name: z
+                  .string()
+                  .max(160, {
+                    message: "name must not be longer than 30 characters.",
+                  }),
+              })
+              
+                const form = useForm({
+                  resolver: zodResolver(FormSchema),
+                  defaultValues: {
+                      name: name
+                  }
+              })
+              
+                const onSubmit = (data) => {
+                  toast("You changed the following values:",
+                  {
+                    description: (
+                      <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+                      </pre>
+                    ),
+                  })
+                }
+              
+            return(
+                <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bio</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Tell us a little bit about yourself"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          You can <span>@mention</span> other users and organizations.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Submit</Button>
+                </form>
+              </Form>
+            )
+          }
 
 
 
@@ -112,31 +142,7 @@ const FormSchema = z.object({
 
   </PopoverTrigger>
   <PopoverContent>
-  <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+<SetForm />
   </PopoverContent>
 </Popover>
         )
