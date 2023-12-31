@@ -61,10 +61,12 @@ await axios.post('https://login.salesforce.com/services/oauth2/token', thisData,
   }})
 .then( async (response) => {
     const data = response.data
+    let userId = data?.id.split("/").pop()
   console.log(data);
   const {error} = await supabase
   .from("salesforce_auth")
   .update({
+    user_id: userId,
     access_token: data.access_token,
     instance_url: data.instance_url
   })

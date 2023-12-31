@@ -16,12 +16,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
+
 
 
 const MapDrawerForm = ({account, salesforceAuth, setIsOpen}) => {
     console.log(account)
-    const { toast } = useToast()
     const FormSchema = z.object({
         name: z.string().optional(),
         phone: z.string().optional(),
@@ -71,11 +71,11 @@ const MapDrawerForm = ({account, salesforceAuth, setIsOpen}) => {
             console.log(res)
         }
             console.log()
-            toast({
-              title: "You submitted the following values:",
+            toast("You changed the following values:",
+            {
               description: (
                 <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                  <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+                  <code className="text-white">{JSON.stringify(body, null, 2)}</code>
                 </pre>
               ),
             })

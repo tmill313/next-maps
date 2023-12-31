@@ -1,6 +1,27 @@
 'use client'
+import {useState} from 'react'
 import { MoreHorizontal, ArrowUpDown} from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { toast } from "sonner"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,18 +61,86 @@ export const columns = [
       header: "Status",
     },
     {
-      accessorKey: "email",
+      accessorKey: "Name",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Email
+            Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
+      cell: ({ row }) => {
+          const name = row.getValue("Name")
+const FormSchema = z.object({
+  name: z
+    .string()
+    .max(160, {
+      message: "name must not be longer than 30 characters.",
+    }),
+})
+
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+        name: name
+    }
+})
+
+  const onSubmit = (data) => {
+    toast("You changed the following values:",
+    {
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    })
+  }
+
+
+
+
+   
+        return (
+<Popover>
+  <PopoverTrigger asChild>
+    <span>{name}</span>
+
+  </PopoverTrigger>
+  <PopoverContent>
+  <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bio</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Tell us a little bit about yourself"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                You can <span>@mention</span> other users and organizations.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  </PopoverContent>
+</Popover>
+        )
+      }
     },
     {
       accessorKey: "amount",
