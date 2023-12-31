@@ -3,7 +3,7 @@ import themes from "daisyui/src/theming/themes.js";
 const config = {
   baseURL: process.env.NODE_ENV === "development"
   ? 'http://localhost:3000'
-  : 'https://www.clickclickpow.click/',
+  : 'https://www.clickclickpow.click',
   // REQUIRED
   appName: "Click Click Pow",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
