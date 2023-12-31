@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import config from "@/config";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import Navigation from "./Navigation";
 
 // This is a server-side component to ensure the user is logged in.
 // If not, it will redirect to the login page.
@@ -19,5 +20,13 @@ export default async function LayoutPrivate({ children }) {
     redirect(config.auth.loginUrl);
   }
 
-  return <>{children}</>;
+  return (
+<>
+    <div className="relative flex min-h-screen flex-col bg-background">
+    <Navigation/>
+    <main className="flex-1">{children}</main>
+  </div>
+  </>
+
+  ) 
 }
