@@ -32,7 +32,7 @@ useEffect(() => {
     setOpen(false)
 }, [pathname])
   return (
-    <DropdownMenu open={open}>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button onClick={() => setOpen(true)} variant="outline">{obj[path]}</Button>
       </DropdownMenuTrigger>
