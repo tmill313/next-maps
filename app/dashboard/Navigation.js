@@ -11,18 +11,19 @@ import {
     } from "@/components/ui/navigation-menu"
     import Link from "next/link"
 import ProfileDrowdown from "./ProfileDrowdown"
+import SmallNav from "./SmallNav"
   
   const Navigation = () => {
     return (
 
-              <div className="hidden flex-col md:flex">
+              <div className="flex-col flex">
               <div className="border-b">
               <div className="flex h-16 items-center px-4">
-                <div>
+                <div className="hidden md:block">
 <NavigationMenu>
   <NavigationMenuList>
   <NavigationMenuItem>
-          <Link href="/dashboard" legacyBehavior passHref>
+          <Link href="/dashboard/" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Dashboard
             </NavigationMenuLink>
@@ -44,6 +45,9 @@ import ProfileDrowdown from "./ProfileDrowdown"
         </NavigationMenuItem>
   </NavigationMenuList>
 </NavigationMenu>
+</div>
+<div className="md:hidden">
+  <SmallNav />
 </div>
 <div className="ml-auto flex items-center space-x-4">
 <ProfileDrowdown />
