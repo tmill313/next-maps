@@ -13,7 +13,6 @@ const MapDrawer = ({isOpen, currentAccount, setIsOpen, isLoading, salesforceAuth
 
 return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-  <SheetTrigger>Open</SheetTrigger>
   <SheetContent>
     <SheetHeader>
       <SheetTitle>{currentAccount?.Name}</SheetTitle>

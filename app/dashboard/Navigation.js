@@ -16,7 +16,7 @@ import SmallNav from "./SmallNav"
   const Navigation = () => {
     return (
 
-              <div className="flex-col flex">
+              <div className="sticky top-0 z-50 bg-white flex-col flex">
               <div className="border-b">
               <div className="flex h-16 items-center px-4">
                 <div className="hidden md:block">
