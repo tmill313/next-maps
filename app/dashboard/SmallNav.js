@@ -34,9 +34,9 @@ useEffect(() => {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button onClick={() => setOpen(true)} variant="outline">{obj[path]}</Button>
+        <Button onClick={() => setOpen(true)} className="relative" variant="outline">{obj[path]}</Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent align="start" forceMount className="w-56">
         <DropdownMenuLabel>Navigation</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={path}>
