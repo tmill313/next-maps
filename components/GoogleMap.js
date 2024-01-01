@@ -13,6 +13,8 @@ import {
   } from "react-geocode";
 import ButtonGradient from './ButtonGradient';
 import MapDrawerContainer from './MapDrawerContainer';
+import MapMenu from './MapMenu';
+import SmallNav from '@/app/dashboard/SmallNav';
 
 const ALL_ACCOUNTS = 'accounts'
 const CUSTOMERS = 'customers'
@@ -20,10 +22,12 @@ const PROSPECTS = 'prospects'
 const GoogleMap = () => {
     const [points, setPoints] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [pointType, setPointType] = useState(ALL_ACCOUNTS)
     const [isOpen, setIsOpen] = useState(false)
     const [currentPoint, setCurrentPoint] = useState(null)
     const [salesforce, setSalesforce] = useState(null)
+    const [accounts, setAccounts] = useState(true)
+    const [customers, setCustomers] = useState(false)
+    const [prospects, setProspects] = useState(false)
     const supabase = createClientComponentClient();
 
     useEffect(() => {
@@ -59,12 +63,12 @@ const GoogleMap = () => {
 
         try {
             let records
-            if(pointType === ALL_ACCOUNTS) {
+            if(accounts) {
             const res = await axios.get(salesforceURL, options);
             records = res?.data?.records
             }
 
-            if( pointType === CUSTOMERS) {
+            if( customers) {
             const res = await axios.get(customerURL, options);
             const newSet = new Set()
             res?.data?.records?.map(opp => {
@@ -80,7 +84,7 @@ const GoogleMap = () => {
             records = collectionRes.data
             }
 
-            if(pointType === PROSPECTS) {
+            if(prospects) {
                 const accountRes = await axios.get(salesforceURL, options);
                 const res = await axios.get(prospectsURL, options);
                 console.log(res)
@@ -115,7 +119,7 @@ const GoogleMap = () => {
       };
       setPoints([])
       getUser();
-    }, [supabase, pointType]);
+    }, [supabase, accounts, customers, prospects]);
 
     const getPoints = (array) => {
         array?.map((account, i) => {
@@ -153,10 +157,7 @@ const GoogleMap = () => {
         console.log(isLoading)
        if(isLoading) return <div>spinner</div>>
        console.log(points)
-        return ( <div style={{'height': '94vh', 'width': '100%'}}>
-              <ButtonGradient onClick={() => setPointType(PROSPECTS)} title='Prospects'/>
-  <ButtonGradient onClick={() => setPointType(CUSTOMERS)} title='Customers'/>
-  <ButtonGradient onClick={() => setPointType(ALL_ACCOUNTS)} title='All Accounts'/>
+        return ( <div style={{'height': '100vh', 'width': '100%'}}>
   <APIProvider apiKey={API_KEY}>
     <Map
       mapId={'a74a7fe3dafbd1e'}
@@ -166,13 +167,20 @@ const GoogleMap = () => {
       disableDefaultUI={true}
     >
 
+        <MapMenu 
+        accounts={accounts}
+         setAccounts={setAccounts} 
+         customers={customers}
+        setCustomers={setCustomers}
+        prospects={prospects}
+        setProspects={setProspects}/>
 {points?.map((point, i) => {
             return(  
             <Marker
             onMouseOver={() => console.log('yooo')}
-                position={point}
-                    onClick={() => handlePointClick(point.id)}
-                key={point.key}>
+            position={point}
+            onClick={() => handlePointClick(point.id)}
+            key={point.key}>
               </Marker>
 )}  )}
     </Map>
