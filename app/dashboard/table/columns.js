@@ -506,7 +506,6 @@ export const columns = [
             body = data
             const newBody = JSON.stringify(body);
             const res = await axios.patch(salesforceURL, newBody, options);
-            name = data?.industry
           
         }
             if(dirtyFields) {
@@ -559,7 +558,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{!!amount ? formatted : 'N/A'}</div>
+<div className="text-right font-medium">{amount ? formatted : 'N/A'}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
@@ -623,7 +622,6 @@ export const columns = [
             body = data
             const newBody = JSON.stringify(body);
             const res = await axios.patch(salesforceURL, newBody, options);
-            name = data?.industry
           
         }
             if(dirtyFields) {
@@ -676,7 +674,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{!!employees ? employees : 'N/A'}</div>
+<div className="text-right font-medium">{employees ? employees : 'N/A'}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
