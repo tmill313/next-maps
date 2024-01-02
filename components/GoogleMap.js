@@ -157,7 +157,7 @@ const GoogleMap = () => {
         console.log(isLoading)
        if(isLoading) return <div>spinner</div>>
        console.log(points)
-        return ( <div style={{'height': '100vh', 'width': '100%'}}>
+        return ( <div style={{'height': '92vh', 'width': '100%'}}>
   <APIProvider apiKey={API_KEY}>
     <Map
       mapId={'a74a7fe3dafbd1e'}

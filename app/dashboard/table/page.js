@@ -45,14 +45,19 @@ const DemoPage = () => {
                     'Access-Control-Allow-Headers': '*',
                   },
                 };
-            const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query?q=SELECT+id,name,billingAddress+FROM+Account`
+            const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query?q=SELECT+id,name,billingAddress,industry,annualRevenue,numberOfEmployees+FROM+Account`
             const customerURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,accountid+FROM+Opportunity+WHERE+isWon=true`
             const prospectsURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,accountid+FROM+Opportunity+WHERE+isWon=true`
       
             let records
+            let pickList
               try {
                   if(pointType === ALL_ACCOUNTS) {
+                      const industryUrl = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/describe`
                   const res = await axios.get(salesforceURL, options);
+                  let industryRes = await axios.get(industryUrl, options);
+                  let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
+                  pickList = industryPick
                   records = res?.data?.records
                   }
       
@@ -106,7 +111,13 @@ const DemoPage = () => {
                     Name: item.Name,
                     id: item.Id,
                     amount: 100,
-                    status: 'pending'
+                    status: 'pending', 
+                    salesforceAuth,
+                    BillingAddress: item?.BillingAddress,
+                    pickList: pickList,
+                    Industry: item?.Industry,
+                    NumberOfEmployees: item?.NumberOfEmployees,
+                    AnnualRevenue: item?.AnnualRevenue
                 }
             ))
     await setData(newData)
