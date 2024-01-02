@@ -85,13 +85,19 @@ export const columns = [
                     message: "name must not be longer than 30 characters.",
                   }),
               })
-              
+              const SetUseForm = () => {
                 const form = useForm({
                   resolver: zodResolver(FormSchema),
                   defaultValues: {
-                      name: name
+                    name: name
                   }
-              })
+                })
+
+                return form
+              }
+              const form = SetUseForm()
+              
+
             const SetForm = () => {
   
                 const options = {
@@ -204,12 +210,19 @@ export const columns = [
                   message: "name must not be longer than 30 characters.",
                 }),
             })
+
+
+        const SetUseForm = () => {
           const form = useForm({
             resolver: zodResolver(FormSchema),
             defaultValues: {
                 industry: industry
             }
         })
+
+          return form
+        }
+        const form = SetUseForm()
         let name = form.getValues('industry') 
           const SetForm = () => {
               
@@ -458,13 +471,20 @@ export const columns = [
           .string()
           .max(160),
         })
-        
+
+        const SetUseForm = () => {
           const form = useForm({
             resolver: zodResolver(FormSchema),
             defaultValues: {
                 annualRevenue: regularAmount,
             }
         })
+
+          return form
+        }
+        const form = SetUseForm()
+        
+ 
         const SetForm = () => {
 
             const options = {
@@ -570,13 +590,20 @@ export const columns = [
           .string()
           .max(160),
         })
-        
+
+        const SetUseForm = () => {
           const form = useForm({
             resolver: zodResolver(FormSchema),
             defaultValues: {
               numberOfEmployees: number,
             }
         })
+
+          return form
+        }
+        const form = SetUseForm()
+        
+
         const SetForm = () => {
 
             const options = {
