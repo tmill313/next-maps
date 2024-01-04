@@ -92,7 +92,6 @@ export const columns = [
               const form = SetUseForm()
               
 
-            const SetForm = () => {
   
                 const options = {
                   headers: {
@@ -130,8 +129,20 @@ export const columns = [
               }
         }
                   let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
-              return(
-                  <Form {...form}>
+
+  
+  
+  
+  
+     
+          return (
+  <Popover>
+    <PopoverTrigger asChild>
+      <span className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{owner}</span>
+  
+    </PopoverTrigger>
+    <PopoverContent>
+    <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-80 space-y-6">
                     <FormField
                       control={form.control}
@@ -156,21 +167,6 @@ export const columns = [
                     </div>
                   </form>
                 </Form>
-              )
-            }
-  
-  
-  
-  
-     
-          return (
-  <Popover>
-    <PopoverTrigger asChild>
-      <span className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{owner}</span>
-  
-    </PopoverTrigger>
-    <PopoverContent>
-  <SetForm />
     </PopoverContent>
   </Popover>
           )
