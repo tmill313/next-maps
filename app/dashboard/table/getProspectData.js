@@ -26,7 +26,7 @@ const getProspectData = async (setData, setIsLoading) => {
               },
             };
 
-        const PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Industry,BillingAddress,NumberOfEmployees,AnnualRevenue,LastActivityDate,Owner.Name,(Select+Id,MobilePhone,Name,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='005Hs00000ER1uBIAT'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+        const PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Industry,BillingAddress,NumberOfEmployees,AnnualRevenue,LastActivityDate,Owner.Name,Owner.Id(Select+Id,MobilePhone,Name,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='005Hs00000ER1uBIAT'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
   
         let records
         let pickList
@@ -58,11 +58,11 @@ const getProspectData = async (setData, setIsLoading) => {
                 LastActivityDate: item?.LastActivityDate,
                 Notes: item?.Notes,
                 ContactName: contact?.Name,
-                MobileNumber: contact?.MobilePhone,
+                MobilePhone: contact?.MobilePhone,
                 ContactTitle: contact?.Title,
                 ContactEmail: contact?.Email,
                 ContactId: contact?.Id,
-                Owner: item?.Owner.Name
+                Owner: item?.Owner
             }
         )})
         console.log(newData)

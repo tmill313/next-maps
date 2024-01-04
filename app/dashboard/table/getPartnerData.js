@@ -26,7 +26,7 @@ const getPartnerData = async (setData, setIsLoading) => {
               },
             };
 
-        const PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Owner.Name,(Select+Id,MobilePhone,Name,Email+FROM+Contacts)+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
+        const PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Owner.Name,Owner.Id,(Select+Id,MobilePhone,Name,Email+FROM+Contacts)+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
   
         let records
         let pickList
@@ -47,11 +47,11 @@ const getPartnerData = async (setData, setIsLoading) => {
                 status: 'pending', 
                 salesforceAuth,
                 ContactName: contact?.Name,
-                MobileNumber: contact?.MobilePhone,
+                MobilePhone: contact?.MobilePhone,
                 ContactTitle: contact?.Title,
                 ContactEmail: contact?.Email,
                 ContactId: contact?.Id,
-                Owner: item?.Owner.Name
+                Owner: item?.Owner
             }
         )})
         console.log(newData)

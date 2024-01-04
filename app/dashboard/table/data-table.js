@@ -2,7 +2,6 @@
 import {useState} from "react"
 import {
   ColumnDef,
-  SortingState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -128,8 +127,9 @@ export function DataTable({
               >
                 {row.getVisibleCells().map((cell) => {
                   const size = cell.column.getSize()
+                  console.log(size)
                   return(
-                  <TableCell className={`min-w-[${Number(size)}px]`} key={cell.id}>
+                  <TableCell className={`max-w-[${size}px]`} key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 )})}

@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import axios from 'axios'
+import { Badge } from "@/components/ui/badge"
+
 
 import {
   Form,
@@ -34,6 +36,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from '@/components/ui/input'
 import PickList from '@/components/PickList'
+import NameInput from './components/NameInput'
 
 
 export const columns = [
@@ -71,7 +74,7 @@ export const columns = [
         cell: ({ row }) => {
           const salesforceAuth = row?.original?.salesforceAuth
           const account = row?.original
-            const owner = row.getValue("Owner")
+            const owner = row.getValue("Owner")?.Name
             const FormSchema = z.object({
                 owner: z
                   .string()
@@ -101,7 +104,7 @@ export const columns = [
                     'Access-Control-Allow-Headers': '*',
                   },
                 };
-              const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
+              const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Owner/${owner?.id}`
                 
               const onSubmit = async (data) => {
                 let body = {}
@@ -138,6 +141,7 @@ export const columns = [
           return (
   <Popover>
     <PopoverTrigger asChild>
+
       <span className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{owner}</span>
   
     </PopoverTrigger>
@@ -211,8 +215,6 @@ export const columns = [
               }
               const form = SetUseForm()
               
-
-            const SetForm = () => {
   
                 const options = {
                   headers: {
@@ -224,7 +226,8 @@ export const columns = [
                 };
               const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
                 
-              const onSubmit = async (data) => {
+              const onSubmit = async (data, setter, setIsOpen) => {
+                console.log(data)
                 let body = {}
                 const dirtyFields = form.formState?.dirtyFields
                 if(Object.keys(data).length > 0) {
@@ -239,6 +242,8 @@ export const columns = [
               }
             }
                 if(Object.keys(dirtyFields).length > 0) {
+                  setter(data["name"])
+                  setIsOpen(false)
                 toast("You changed the following values:",
                 {
                   description: (
@@ -249,50 +254,42 @@ export const columns = [
                 })
               }
         }
-                  let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
-              return(
-                  <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-80 space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Name"
-                              className="resize-none h-56"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className='flex justify-between'>
-                      <Button variant='secondary'>Cancel</Button>
-                      <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-                    </div>
-                  </form>
-                </Form>
-              )
-            }
+  return (
+    <NameInput onSubmit={onSubmit} name={name} form={form}/>
+  // <Popover>
+  //   <PopoverTrigger asChild>
+  //     <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{name}</span>
   
-  
-  
-  
-     
-          return (
-  <Popover>
-    <PopoverTrigger asChild>
-      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{name}</span>
-  
-    </PopoverTrigger>
-    <PopoverContent>
-  <SetForm />
-    </PopoverContent>
-  </Popover>
+  //   </PopoverTrigger>
+  //   <PopoverContent>
+  //   <Form {...form}>
+  //                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-80 space-y-6">
+  //                   <FormField
+  //                     control={form.control}
+  //                     name="name"
+  //                     render={({ field }) => (
+  //                       <FormItem>
+  //                         <FormLabel>Name</FormLabel>
+  //                         <FormControl>
+  //                           <Textarea
+  //                             placeholder="Name"
+  //                             className="resize-none h-56"
+  //                             {...field}
+  //                           />
+  //                         </FormControl>
+  //                         <FormMessage />
+  //                       </FormItem>
+  //                     )}
+  //                   />
+  //                   <div className='flex justify-between'>
+  //                     <Button variant='secondary'>Cancel</Button>
+  //                     <Button disabled={!areFieldsDirty} type="submit">Save</Button>
+  //                   </div>
+  //                 </form>
+  //               </Form>
+              
+  //   </PopoverContent>
+  // </Popover>
           )
         }
       },
@@ -338,7 +335,6 @@ export const columns = [
         }
         const form = SetUseForm()
         let name = form.getValues('industry') 
-          const SetForm = () => {
               
 
               const options = {
@@ -374,16 +370,6 @@ export const columns = [
         }
                 let areFieldsDirty = true
 
-            return (<PickList 
-              areFieldsDirty={areFieldsDirty}  
-              salesforceURL={salesforceURL}
-              options={options}
-              onSubmit={onSubmit}
-              pickList={pickList}
-              form={form}
-              />)
-          }
-
 
 
 
@@ -395,7 +381,14 @@ export const columns = [
 
           </PopoverTrigger>
           <PopoverContent>
-        <SetForm />
+          <PickList 
+              areFieldsDirty={areFieldsDirty}  
+              salesforceURL={salesforceURL}
+              options={options}
+              onSubmit={onSubmit}
+              pickList={pickList}
+              form={form}
+              />
           </PopoverContent>
         </Popover>
                 )
@@ -419,7 +412,7 @@ export const columns = [
 
           const account = row?.original
             const billingAddress = row.getValue("BillingAddress")
-            const SetForm = () => {
+
               const FormSchema = z.object({
                   billingStreet: z
                     .string()
@@ -437,7 +430,7 @@ export const columns = [
                       message: "name must not be longer than 30 characters.",
                     }),
                 })
-                
+                const SetUseForm = () => {
                   const form = useForm({
                     resolver: zodResolver(FormSchema),
                     defaultValues: {
@@ -446,6 +439,11 @@ export const columns = [
                         billingState: billingAddress?.state
                     }
                 })
+        
+                  return form
+                }
+
+                const form = SetUseForm()
   
                 const options = {
                   headers: {
@@ -483,8 +481,19 @@ export const columns = [
                         }
                   }
                 let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
-              return(
-                  <Form {...form}>
+
+  
+  
+  
+     
+          return (
+  <Popover>
+    <PopoverTrigger asChild>
+      <span className='max-w-[400px] whitespace-nowrap text-ellipsis overflow-hidden'>{`${billingAddress?.street ?? ''}, ${billingAddress?.city ?? ''}, ${billingAddress?.state ?? ''} `}</span>
+  
+    </PopoverTrigger>
+    <PopoverContent>
+    <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
                     <FormField
                       control={form.control}
@@ -542,23 +551,7 @@ export const columns = [
                     <Button disabled={!areFieldsDirty} type="submit">Save</Button>
                   </div>
                   </form>
-                </Form>
-              )
-            }
-  
-  
-  
-  
-     
-          return (
-  <Popover>
-    <PopoverTrigger asChild>
-      <span className='text-ellipsis overflow-hidden'>{`${billingAddress?.street ?? ''}, ${billingAddress?.city ?? ''}, ${billingAddress?.state ?? ''} `}</span>
-  
-    </PopoverTrigger>
-    <PopoverContent>
-  <SetForm />
-    </PopoverContent>
+                </Form>    </PopoverContent>
   </Popover>
           )
         }
@@ -567,7 +560,7 @@ export const columns = [
 
     {
       accessorKey: "AnnualRevenue",
-          header: () => <div className="text-left">Revenue</div>,
+          header: () => <div className="text-center">Revenue</div>,
     cell: ({ row }) => {
       const regularAmount = row?.getValue("AnnualRevenue") ?? ''
       const amount = parseFloat(row.getValue("AnnualRevenue"))
@@ -601,8 +594,6 @@ export const columns = [
         const form = SetUseForm()
         
  
-        const SetForm = () => {
-
             const options = {
               headers: {
                 Authorization: `Bearer ${salesforceAuth?.access_token}`,
@@ -636,8 +627,18 @@ export const columns = [
           }
     }
             let areFieldsDirty = form.formState?.defaultValues.annualRevenue !== parseInt(form.getValues('annualRevenue'))
-          return(
-              <Form {...form}>
+
+
+
+
+ 
+      return (
+<Popover>
+<PopoverTrigger asChild>
+<div className="text-center">{amount ? formatted : 'N/A'}</div>
+</PopoverTrigger>
+<PopoverContent>
+<Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
                 <FormField
                   control={form.control}
@@ -663,22 +664,7 @@ export const columns = [
                 <Button disabled={!areFieldsDirty} type="submit">Save</Button>
               </div>
               </form>
-            </Form>
-          )
-        }
-
-
-
-
- 
-      return (
-<Popover>
-<PopoverTrigger asChild>
-<div className="text-left font-medium">{amount ? formatted : 'N/A'}</div>
-</PopoverTrigger>
-<PopoverContent>
-<SetForm />
-</PopoverContent>
+            </Form></PopoverContent>
 </Popover>
       )
  
@@ -718,9 +704,6 @@ export const columns = [
         }
         const form = SetUseForm()
         
-
-        const SetForm = () => {
-
             const options = {
               headers: {
                 Authorization: `Bearer ${salesforceAuth?.access_token}`,
@@ -752,7 +735,17 @@ export const columns = [
           }
     }
             let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('numberOfEmployees'))
-          return(
+
+
+
+
+ 
+      return (
+<Popover>
+<PopoverTrigger asChild>
+<div className="text-center font-medium">{employees ? employees : 'N/A'}</div>
+</PopoverTrigger>
+<PopoverContent>
               <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
                 <FormField
@@ -779,22 +772,7 @@ export const columns = [
                 <Button disabled={!areFieldsDirty} type="submit">Save</Button>
               </div>
               </form>
-            </Form>
-          )
-        }
-
-
-
-
- 
-      return (
-<Popover>
-<PopoverTrigger asChild>
-<div className="text-center font-medium">{employees ? employees : 'N/A'}</div>
-</PopoverTrigger>
-<PopoverContent>
-<SetForm />
-</PopoverContent>
+            </Form></PopoverContent>
 </Popover>
       )
  
@@ -806,12 +784,9 @@ export const columns = [
       accessorKey: "ContactName",
           header: () => <div className="text-right">Contact Name</div>,
     cell: ({ row }) => {
+      const contactId = row?.original?.ContactId
       let contactName = row?.getValue("ContactName") ?? ''
       const salesforceAuth = row?.original?.salesforceAuth
-
-
-      const account = row?.original
-
       const FormSchema = z.object({
           contactName: z
           .string()
@@ -831,8 +806,6 @@ export const columns = [
         const form = SetUseForm()
         
 
-        const SetForm = () => {
-
             const options = {
               headers: {
                 Authorization: `Bearer ${salesforceAuth?.access_token}`,
@@ -841,7 +814,7 @@ export const columns = [
                 'Access-Control-Allow-Headers': '*',
               },
             };
-          const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
+          const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
             
           const onSubmit = async (data) => {
             let body = {}
@@ -864,8 +837,17 @@ export const columns = [
           }
     }
             let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('name'))
-          return(
-              <Form {...form}>
+
+
+
+ 
+      return (
+<Popover>
+<PopoverTrigger asChild>
+<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{contactName}</div>
+</PopoverTrigger>
+<PopoverContent>
+<Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
                 <FormField
                   control={form.control}
@@ -890,22 +872,7 @@ export const columns = [
                 <Button disabled={!areFieldsDirty} type="submit">Save</Button>
               </div>
               </form>
-            </Form>
-          )
-        }
-
-
-
-
- 
-      return (
-<Popover>
-<PopoverTrigger asChild>
-<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{contactName}</div>
-</PopoverTrigger>
-<PopoverContent>
-<SetForm />
-</PopoverContent>
+            </Form></PopoverContent>
 </Popover>
       )
  
@@ -916,8 +883,10 @@ export const columns = [
 
     {
       accessorKey: "ContactEmail",
+      size: 200,
           header: () => <div className="text-center">Email</div>,
     cell: ({ row }) => {
+      const contactId = row?.original?.ContactId
       let email = row?.getValue("ContactEmail") ?? ''
       const salesforceAuth = row?.original?.salesforceAuth
 
@@ -942,9 +911,6 @@ export const columns = [
         }
         const form = SetUseForm()
         
-
-        const SetForm = () => {
-
             const options = {
               headers: {
                 Authorization: `Bearer ${salesforceAuth?.access_token}`,
@@ -953,7 +919,7 @@ export const columns = [
                 'Access-Control-Allow-Headers': '*',
               },
             };
-          const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
+          const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
             
           const onSubmit = async (data) => {
             let body = {}
@@ -976,8 +942,19 @@ export const columns = [
           }
     }
             let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('email'))
-          return(
-              <Form {...form}>
+
+
+
+
+
+ 
+      return (
+<Popover>
+<PopoverTrigger asChild>
+<div className="max-w-[200px] whitespace-nowrap text-ellipsis overflow-hidden text-left">{email}</div>
+</PopoverTrigger>
+<PopoverContent>
+<Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
                 <FormField
                   control={form.control}
@@ -1002,22 +979,7 @@ export const columns = [
                 <Button disabled={!areFieldsDirty} type="submit">Save</Button>
               </div>
               </form>
-            </Form>
-          )
-        }
-
-
-
-
- 
-      return (
-<Popover>
-<PopoverTrigger asChild>
-<div className="text-left">{email}</div>
-</PopoverTrigger>
-<PopoverContent>
-<SetForm />
-</PopoverContent>
+            </Form></PopoverContent>
 </Popover>
       )
  
@@ -1028,17 +990,18 @@ export const columns = [
 
 
     {
-      accessorKey: "MobileNumber",
+      accessorKey: "MobilePhone",
           header: () => <div className="text-right">Phone</div>,
     cell: ({ row }) => {
-      let mobileNumber = row?.getValue("MobileNumber") ?? ''
+      const contactId = row?.original?.ContactId
+      let mobilePhone = row?.getValue("MobilePhone") ?? ''
       const salesforceAuth = row?.original?.salesforceAuth
 
 
       const account = row?.original
 
       const FormSchema = z.object({
-          mobileNumber: z
+          mobilePhone: z
           .string()
           .max(160),
         })
@@ -1047,7 +1010,7 @@ export const columns = [
           const form = useForm({
             resolver: zodResolver(FormSchema),
             defaultValues: {
-              mobileNumber: mobileNumber,
+              mobilePhone: mobilePhone,
             }
         })
 
@@ -1055,9 +1018,6 @@ export const columns = [
         }
         const form = SetUseForm()
         
-
-        const SetForm = () => {
-
             const options = {
               headers: {
                 Authorization: `Bearer ${salesforceAuth?.access_token}`,
@@ -1066,7 +1026,7 @@ export const columns = [
                 'Access-Control-Allow-Headers': '*',
               },
             };
-          const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
+          const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
             
           const onSubmit = async (data) => {
             let body = {}
@@ -1089,12 +1049,20 @@ export const columns = [
           }
     }
             let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('email'))
-          return(
-              <Form {...form}>
+
+
+ 
+      return (
+<Popover>
+<PopoverTrigger asChild>
+<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{mobilePhone}</div>
+</PopoverTrigger>
+<PopoverContent>
+<Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
                 <FormField
                   control={form.control}
-                  name="mobileNumber"
+                  name="mobilePhone"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
@@ -1115,22 +1083,7 @@ export const columns = [
                 <Button disabled={!areFieldsDirty} type="submit">Save</Button>
               </div>
               </form>
-            </Form>
-          )
-        }
-
-
-
-
- 
-      return (
-<Popover>
-<PopoverTrigger asChild>
-<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{mobileNumber}</div>
-</PopoverTrigger>
-<PopoverContent>
-<SetForm />
-</PopoverContent>
+            </Form></PopoverContent>
 </Popover>
       )
  
