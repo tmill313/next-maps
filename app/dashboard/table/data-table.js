@@ -86,7 +86,7 @@ export function DataTable({
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
+                    className="capitalize pr-10"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
@@ -126,11 +126,13 @@ export function DataTable({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                {row.getVisibleCells().map((cell) => {
+                  const size = cell.column.getSize()
+                  return(
+                  <TableCell className={`min-w-[${Number(size)}px]`} key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
-                ))}
+                )})}
               </TableRow>
             ))
           ) : (

@@ -37,28 +37,28 @@ import PickList from '@/components/PickList'
 
 
 export const columns = [
-    {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
+    // {
+    //     id: "select",
+    //     header: ({ table }) => (
+    //       <Checkbox
+    //         checked={
+    //           table.getIsAllPageRowsSelected() ||
+    //           (table.getIsSomePageRowsSelected() && "indeterminate")
+    //         }
+    //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //         aria-label="Select all"
+    //       />
+    //     ),
+    //     cell: ({ row }) => (
+    //       <Checkbox
+    //         checked={row.getIsSelected()}
+    //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //         aria-label="Select row"
+    //       />
+    //     ),
+    //     enableSorting: false,
+    //     enableHiding: false,
+    //   },
 
 
       {
@@ -166,7 +166,7 @@ export const columns = [
           return (
   <Popover>
     <PopoverTrigger asChild>
-      <span>{owner}</span>
+      <span className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{owner}</span>
   
     </PopoverTrigger>
     <PopoverContent>
@@ -180,6 +180,7 @@ export const columns = [
 
       {
         accessorKey: "Name",
+        size: 170,
         header: ({ column }) => {
           return (
             <Button
@@ -289,7 +290,7 @@ export const columns = [
           return (
   <Popover>
     <PopoverTrigger asChild>
-      <span>{name}</span>
+      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{name}</span>
   
     </PopoverTrigger>
     <PopoverContent>
@@ -409,6 +410,7 @@ export const columns = [
 
     {
         accessorKey: "BillingAddress",
+        size: 400,
           enableResizing: true,
         header: ({ column }) => {
           return (
@@ -569,7 +571,7 @@ export const columns = [
 
     {
       accessorKey: "AnnualRevenue",
-          header: () => <div className="text-right">Revenue</div>,
+          header: () => <div className="text-left">Revenue</div>,
     cell: ({ row }) => {
       const regularAmount = row?.getValue("AnnualRevenue") ?? ''
       const amount = parseFloat(row.getValue("AnnualRevenue"))
@@ -676,7 +678,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{amount ? formatted : 'N/A'}</div>
+<div className="text-left font-medium">{amount ? formatted : 'N/A'}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
@@ -693,7 +695,7 @@ export const columns = [
 
     {
       accessorKey: "NumberOfEmployees",
-          header: () => <div className="text-right">Employees</div>,
+          header: () => <div className="text-center">Employees</div>,
     cell: ({ row }) => {
       let number = row?.getValue("NumberOfEmployees") ?? ''
       const employees = number ? parseInt(number).toLocaleString('en-US', {maximumFractionDigits:2}) : number
@@ -792,7 +794,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{employees ? employees : 'N/A'}</div>
+<div className="text-center font-medium">{employees ? employees : 'N/A'}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
@@ -903,7 +905,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{contactName}</div>
+<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{contactName}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
@@ -918,7 +920,7 @@ export const columns = [
 
     {
       accessorKey: "ContactEmail",
-          header: () => <div className="text-right">Email</div>,
+          header: () => <div className="text-center">Email</div>,
     cell: ({ row }) => {
       let email = row?.getValue("ContactEmail") ?? ''
       const salesforceAuth = row?.original?.salesforceAuth
@@ -1015,7 +1017,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{email}</div>
+<div className="text-left">{email}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
@@ -1128,7 +1130,7 @@ export const columns = [
       return (
 <Popover>
 <PopoverTrigger asChild>
-<div className="text-right font-medium">{mobileNumber}</div>
+<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{mobileNumber}</div>
 </PopoverTrigger>
 <PopoverContent>
 <SetForm />
