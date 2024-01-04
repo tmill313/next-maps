@@ -1,6 +1,6 @@
 'use client'
 import React, {useRef, useState, useEffect} from 'react';
-import {APIProvider, Map, Marker, useMap, AdvancedMarker} from '@vis.gl/react-google-maps';
+import {APIProvider, Map, Marker, useMap, AdvancedMarker, Pin} from '@vis.gl/react-google-maps';
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 import {MarkerClusterer} from '@googlemaps/markerclusterer';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -15,19 +15,22 @@ import ButtonGradient from './ButtonGradient';
 import MapDrawerContainer from './MapDrawerContainer';
 import MapMenu from './MapMenu';
 import SmallNav from '@/app/dashboard/SmallNav';
+import Spinner from './Spinner';
 
 const ALL_ACCOUNTS = 'accounts'
 const CUSTOMERS = 'customers'
 const PROSPECTS = 'prospects'
 const GoogleMap = () => {
-    const [points, setPoints] = useState([])
+    const [prospectPoints, setProspectPoints] = useState([])
+    const [customerPoints, setCustomerPoints] = useState([])
+    const [partnerPoints, setPartnerPoints] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
     const [currentPoint, setCurrentPoint] = useState(null)
     const [salesforce, setSalesforce] = useState(null)
-    const [accounts, setAccounts] = useState(true)
+    const [partners, setPartners] = useState(false)
     const [customers, setCustomers] = useState(false)
-    const [prospects, setProspects] = useState(false)
+    const [prospects, setProspects] = useState(true)
     const supabase = createClientComponentClient();
 
     useEffect(() => {
@@ -57,15 +60,16 @@ const GoogleMap = () => {
               'Access-Control-Allow-Headers': '*',
             },
           };
+          const PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,billingAddress+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
       const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query?q=SELECT+id,name,billingAddress+FROM+Account`
       const customerURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,accountid+FROM+Opportunity+WHERE+isWon=true`
       const prospectsURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,accountid+FROM+Opportunity+WHERE+isWon=true`
 
         try {
-            let records
-            if(accounts) {
-            const res = await axios.get(salesforceURL, options);
-            records = res?.data?.records
+            setKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
+            if(partners) {
+            const res = await axios.get(PARTNER_URL, options);
+            getPoints(res?.data?.records, setPartnerPoints)
             }
 
             if( customers) {
@@ -81,7 +85,8 @@ const GoogleMap = () => {
             console.log(joined)
             const collectionURL = `${salesforceAuth?.instance_url}/services/data/v59.0/composite/sobjects/Account?ids=${joined}&fields=id,name,billingAddress`
             const collectionRes = await axios.get(collectionURL, options);
-            records = collectionRes.data
+            getPoints(collectionRes.data, setCustomerPoints)
+
             }
 
             if(prospects) {
@@ -106,22 +111,21 @@ const GoogleMap = () => {
                 console.log(joined)
                 const collectionURL = `${salesforceAuth?.instance_url}/services/data/v59.0/composite/sobjects/Account?ids=${joined}&fields=id,name,billingAddress`
                 const collectionRes = await axios.get(collectionURL, options);
-                records = collectionRes.data
+                getPoints(collectionRes.data, setProspectPoints)
             }
-            setKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
-            console.log(records)
-            getPoints(records)
-            console.log(points)
             setIsLoading(false)
         } catch (error) {
             console.log(error)
         }
       };
-      setPoints([])
+      setIsLoading(true)
+      setPartnerPoints([])
+      setProspectPoints([])
+      setCustomerPoints([])
       getUser();
-    }, [supabase, accounts, customers, prospects]);
+    }, [supabase, partners, customers, prospects]);
 
-    const getPoints = (array) => {
+    const getPoints = (array, setter) => {
         array?.map((account, i) => {
             console.log(account)
             if(account.BillingAddress) {
@@ -129,7 +133,7 @@ const GoogleMap = () => {
                 fromAddress(address)
                 .then(({ results }) => {
                     const { lat, lng } = results[0].geometry.location;
-                    setPoints((prevState) => ([...prevState, {
+                    setter((prevState) => ([...prevState, {
                         id: account?.Id,
                         name: i,
                         lat, 
@@ -138,7 +142,6 @@ const GoogleMap = () => {
                     }]))
                 })
                 .catch(console.error);
-                console.log(points, 'points')
                 return
             }
 
@@ -154,10 +157,10 @@ const GoogleMap = () => {
 
       
         
-        console.log(isLoading)
-       if(isLoading) return <div>spinner</div>>
-       console.log(points)
-        return ( <div style={{'height': '92vh', 'width': '100%'}}>
+
+        return ( 
+        <div style={{'height': '92vh', 'width': '100%'}}>
+            <Spinner isLoading={isLoading} />
   <APIProvider apiKey={API_KEY}>
     <Map
       mapId={'a74a7fe3dafbd1e'}
@@ -168,20 +171,47 @@ const GoogleMap = () => {
     >
 
         <MapMenu 
-        accounts={accounts}
-         setAccounts={setAccounts} 
+        partners={partners}
+         setPartners={setPartners} 
          customers={customers}
         setCustomers={setCustomers}
         prospects={prospects}
         setProspects={setProspects}/>
-{points?.map((point, i) => {
+{customerPoints?.map((point, i) => {
             return(  
-            <Marker
+            <AdvancedMarker
             onMouseOver={() => console.log('yooo')}
             position={point}
             onClick={() => handlePointClick(point.id)}
             key={point.key}>
-              </Marker>
+            <Pin
+            background={'#2196f3'}
+            borderColor={'#1976d2'}
+            glyphColor={'#0d47a1'}></Pin>
+              </AdvancedMarker>
+)}  )}
+
+{prospectPoints?.map((point, i) => {
+            return(  
+            <AdvancedMarker
+            onMouseOver={() => console.log('yooo')}
+            position={point}
+            onClick={() => handlePointClick(point.id)}
+            key={point.key}>
+              </AdvancedMarker>
+)}  )}
+{partnerPoints?.map((point, i) => {
+            return(  
+            <AdvancedMarker
+            onMouseOver={() => console.log('yooo')}
+            position={point}
+            onClick={() => handlePointClick(point.id)}
+            key={point.key}>
+                          <Pin
+            background={'#97a97c'}
+            borderColor={'#87986a'}
+            glyphColor={'#718355'}></Pin>
+              </AdvancedMarker>
 )}  )}
     </Map>
   </APIProvider>

@@ -19,18 +19,8 @@ const obj = {
 }
   
 
-  const MapMenu = ({accounts, setAccounts, customers, setCustomers, prospects, setProspects}) => {
+  const MapMenu = ({partners, setPartners, customers, setCustomers, prospects, setProspects}) => {
     const [open, setOpen] = useState(false)
-
-    const handleAccountClick = (e) => {
-        if(!accounts) {
-            setProspects(false)
-            setCustomers(false)
-            setAccounts(true)
-        } else {
-            setAccounts(false)
-        }
-    }
    
     return (
       <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -39,17 +29,16 @@ const obj = {
         </DropdownMenuTrigger>
         <DropdownMenuContent onCloseAutoFocus={e => e.preventDefault()} align="start" forceMount className="w-56">
           <DropdownMenuCheckboxItem
-            checked={accounts}
+            checked={partners}
             onSelect={e => e.preventDefault()}
-            onCheckedChange={(e) => handleAccountClick(e)}
+            onCheckedChange={setPartners}
           >
-            All accounts
+            Partners
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
             checked={customers}
             onCheckedChange={setCustomers}
             onSelect={e => e.preventDefault()}
-            disabled={accounts}
           >
             Customers
           </DropdownMenuCheckboxItem>
@@ -57,7 +46,6 @@ const obj = {
             checked={prospects}
             onCheckedChange={setProspects}
             onSelect={e => e.preventDefault()}
-            disabled={accounts}
           >
             Prospects
           </DropdownMenuCheckboxItem>
