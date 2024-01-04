@@ -37,6 +37,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from '@/components/ui/input'
 import PickList from '@/components/PickList'
 import NameInput from './components/NameInput'
+import AddressForm from './components/AddressForm'
+import RevenueInput from './components/RevenueInput'
+import EmployeesInput from './components/EmployeesInput'
+import ContactNameInput from './components/ContactNameInput'
+import EmailInput from './components/EmailInput'
+import PhoneInput from './components/PhoneInput'
 
 
 export const columns = [
@@ -72,107 +78,9 @@ export const columns = [
           )
         },
         cell: ({ row }) => {
-          const salesforceAuth = row?.original?.salesforceAuth
-          const account = row?.original
             const owner = row.getValue("Owner")?.Name
-            const FormSchema = z.object({
-                owner: z
-                  .string()
-                  .max(160, {
-                    message: "name must not be longer than 30 characters.",
-                  }),
-              })
-              const SetUseForm = () => {
-                const form = useForm({
-                  resolver: zodResolver(FormSchema),
-                  defaultValues: {
-                    owner: owner
-                  }
-                })
-
-                return form
-              }
-              const form = SetUseForm()
-              
-
-  
-                const options = {
-                  headers: {
-                    Authorization: `Bearer ${salesforceAuth?.access_token}`,
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                    'Access-Control-Allow-Headers': '*',
-                  },
-                };
-              const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Owner/${owner?.id}`
-                
-              const onSubmit = async (data) => {
-                let body = {}
-                const dirtyFields = form.formState?.dirtyFields
-                if(Object.keys(data).length > 0) {
-                    if(Object.keys(dirtyFields).length > 0) {
-                for(const thing in data) {
-                    if(dirtyFields[thing]) {
-                        body[thing] = data[thing]
-                    }
-                }
-                const newBody = JSON.stringify(body);
-                const res = await axios.patch(salesforceURL, newBody, options);
-              }
-            }
-                if(Object.keys(dirtyFields).length > 0) {
-                toast("You changed the following values:",
-                {
-                  description: (
-                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                      <code className="text-white">{JSON.stringify(body, null, 2)}</code>
-                    </pre>
-                  ),
-                })
-              }
-        }
-                  let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
-
-  
-  
-  
-  
-     
           return (
-  <Popover>
-    <PopoverTrigger asChild>
-
       <span className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{owner}</span>
-  
-    </PopoverTrigger>
-    <PopoverContent>
-    <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-80 space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="owner"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Owner</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Owner"
-                              className="resize-none h-56"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className='flex justify-between'>
-                      <Button variant='secondary'>Cancel</Button>
-                      <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-                    </div>
-                  </form>
-                </Form>
-    </PopoverContent>
-  </Popover>
           )
         }
       },
@@ -256,40 +164,6 @@ export const columns = [
         }
   return (
     <NameInput onSubmit={onSubmit} name={name} form={form}/>
-  // <Popover>
-  //   <PopoverTrigger asChild>
-  //     <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{name}</span>
-  
-  //   </PopoverTrigger>
-  //   <PopoverContent>
-  //   <Form {...form}>
-  //                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-80 space-y-6">
-  //                   <FormField
-  //                     control={form.control}
-  //                     name="name"
-  //                     render={({ field }) => (
-  //                       <FormItem>
-  //                         <FormLabel>Name</FormLabel>
-  //                         <FormControl>
-  //                           <Textarea
-  //                             placeholder="Name"
-  //                             className="resize-none h-56"
-  //                             {...field}
-  //                           />
-  //                         </FormControl>
-  //                         <FormMessage />
-  //                       </FormItem>
-  //                     )}
-  //                   />
-  //                   <div className='flex justify-between'>
-  //                     <Button variant='secondary'>Cancel</Button>
-  //                     <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-  //                   </div>
-  //                 </form>
-  //               </Form>
-              
-  //   </PopoverContent>
-  // </Popover>
           )
         }
       },
@@ -347,17 +221,19 @@ export const columns = [
               };
             const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
               
-            const onSubmit = async (data) => {
+            const onSubmit = async (data, setIndustry, setOpen) => {
               let body = {}
               const dirtyFields = form.formState?.defaultValues.industry !== data?.industry
               if(dirtyFields) {
               body = data
               const newBody = JSON.stringify(body);
               const res = await axios.patch(salesforceURL, newBody, options);
-              name = data?.industry
+
             
           }
               if(dirtyFields) {
+                setIndustry(data?.industry)
+                setOpen(false)
               toast("You changed the following values:",
               {
                 description: (
@@ -375,12 +251,7 @@ export const columns = [
 
    
         return (
-        <Popover>
-          <PopoverTrigger asChild>
-            <span>{name}</span>
 
-          </PopoverTrigger>
-          <PopoverContent>
           <PickList 
               areFieldsDirty={areFieldsDirty}  
               salesforceURL={salesforceURL}
@@ -388,9 +259,9 @@ export const columns = [
               onSubmit={onSubmit}
               pickList={pickList}
               form={form}
+              name={name}
               />
-          </PopoverContent>
-        </Popover>
+
                 )
       },
     },
@@ -413,30 +284,20 @@ export const columns = [
           const account = row?.original
             const billingAddress = row.getValue("BillingAddress")
 
-              const FormSchema = z.object({
-                  billingStreet: z
-                    .string()
-                    .max(160, {
-                      message: "name must not be longer than 30 characters.",
-                    }),
-                    billingState: z
-                    .string()
-                    .max(160, {
-                      message: "name must not be longer than 30 characters.",
-                    }),
-                    billingCity: z
-                    .string()
-                    .max(160, {
-                      message: "name must not be longer than 30 characters.",
-                    }),
-                })
                 const SetUseForm = () => {
+                  const FormSchema = z.object({
+                    billingStreet: z.string().optional(),
+                      billingState: z.string().optional(),
+                      billingCity: z.string().optional(),
+                      billingPostalCode: z.string().optional(),
+                  })
                   const form = useForm({
                     resolver: zodResolver(FormSchema),
                     defaultValues: {
-                        billingStreet: billingAddress?.street,
-                        billingCity: billingAddress?.city,
-                        billingState: billingAddress?.state
+                        billingStreet: billingAddress?.street ?? '',
+                        billingCity: billingAddress?.city ?? '',
+                        billingState: billingAddress?.state ?? '',
+                        billingPostalCode: billingAddress?.postalCode ?? ''
                     }
                 })
         
@@ -455,13 +316,15 @@ export const columns = [
                 };
               const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
                 
-                  const onSubmit = async (data) => {
+                  const onSubmit = async (data, setter, setIsOpen) => {
                           let body = {}
+                          let defaultValues = form?.formState?.defaultValues
                           const dirtyFields = form.formState?.dirtyFields
                           if(Object.keys(data).length > 0) {
                               if(Object.keys(dirtyFields).length > 0) {
                           for(const thing in data) {
                               if(dirtyFields[thing]) {
+                                  defaultValues[thing] = data[thing]
                                   body[thing] = data[thing]
                               }
                           }
@@ -470,6 +333,9 @@ export const columns = [
                         }
                       }
                           if(Object.keys(dirtyFields).length > 0) {
+                            console.log(defaultValues)
+                            setter(`${defaultValues?.['billingStreet']}, ${defaultValues?.['billingCity']}, ${defaultValues?.['billingState']} ${defaultValues?.['billingPostalCode']}`)
+                            setIsOpen(false)
                           toast("You changed the following values:",
                           {
                             description: (
@@ -480,79 +346,14 @@ export const columns = [
                           })
                         }
                   }
-                let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
+               
 
-  
+  const billingString = `${billingAddress?.street ?? ''}, ${billingAddress?.city ?? ''}, ${billingAddress?.state ?? ''} ${billingAddress?.billingPostalCode ?? ''} `
   
   
      
           return (
-  <Popover>
-    <PopoverTrigger asChild>
-      <span className='max-w-[400px] whitespace-nowrap text-ellipsis overflow-hidden'>{`${billingAddress?.street ?? ''}, ${billingAddress?.city ?? ''}, ${billingAddress?.state ?? ''} `}</span>
-  
-    </PopoverTrigger>
-    <PopoverContent>
-    <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="billingStreet"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Street</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Street"
-                              className="resize-none"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                                        <FormField
-                      control={form.control}
-                      name="billingCity"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="City"
-                              className="resize-none"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                      <FormField
-                      control={form.control}
-                      name="billingState"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>State</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="State"
-                              className="resize-none"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                                      <div className='flex justify-between'>
-                    <Button variant='secondary'>Cancel</Button>
-                    <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-                  </div>
-                  </form>
-                </Form>    </PopoverContent>
-  </Popover>
+            <AddressForm form={form} onSubmit={onSubmit} name={billingString} />
           )
         }
       },
@@ -560,7 +361,7 @@ export const columns = [
 
     {
       accessorKey: "AnnualRevenue",
-          header: () => <div className="text-center">Revenue</div>,
+          header: () => <div className="text-left">Revenue</div>,
     cell: ({ row }) => {
       const regularAmount = row?.getValue("AnnualRevenue") ?? ''
       const amount = parseFloat(row.getValue("AnnualRevenue"))
@@ -604,7 +405,7 @@ export const columns = [
             };
           const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
             
-          const onSubmit = async (data) => {
+          const onSubmit = async (data, setter, setIsOpen) => {
             let body = {}
             const dirtyFields = form.formState?.defaultValues.annualRevenue !== parseInt(data?.annualRevenue)
             console.log(form.formState?.defaultValues.annualRevenue)
@@ -616,6 +417,8 @@ export const columns = [
           
         }
             if(dirtyFields) {
+              setter(data['annualRevenue'])
+              setIsOpen(false)
             toast("You changed the following values:",
             {
               description: (
@@ -626,46 +429,13 @@ export const columns = [
             })
           }
     }
-            let areFieldsDirty = form.formState?.defaultValues.annualRevenue !== parseInt(form.getValues('annualRevenue'))
 
 
 
 
  
       return (
-<Popover>
-<PopoverTrigger asChild>
-<div className="text-center">{amount ? formatted : 'N/A'}</div>
-</PopoverTrigger>
-<PopoverContent>
-<Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
-                <FormField
-                  control={form.control}
-                  name="annualRevenue"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Revenue</FormLabel>
-                      <FormControl>
-                        <Input
-                        type="number"
-                          placeholder="Revenue"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                            
-                                  <div className='flex justify-between'>
-                <Button variant='secondary'>Cancel</Button>
-                <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-              </div>
-              </form>
-            </Form></PopoverContent>
-</Popover>
+        <RevenueInput name={formatted} onSubmit={onSubmit} form={form} />
       )
  
     },
@@ -677,7 +447,7 @@ export const columns = [
 
     {
       accessorKey: "NumberOfEmployees",
-          header: () => <div className="text-center">Employees</div>,
+          header: () => <div className="text-left">Employees</div>,
     cell: ({ row }) => {
       let number = row?.getValue("NumberOfEmployees") ?? ''
       const employees = number ? parseInt(number).toLocaleString('en-US', {maximumFractionDigits:2}) : number
@@ -714,7 +484,7 @@ export const columns = [
             };
           const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.id}`
             
-          const onSubmit = async (data) => {
+          const onSubmit = async (data, setter, setIsOpen) => {
             let body = {}
             const dirtyFields = form.formState?.defaultValues.numberOfEmployees !== parseInt(data?.numberOfEmployees)
             if(dirtyFields) {
@@ -724,6 +494,8 @@ export const columns = [
           
         }
             if(dirtyFields) {
+              setter(data['numberOfEmployees'])
+              setIsOpen(false)
             toast("You changed the following values:",
             {
               description: (
@@ -734,46 +506,13 @@ export const columns = [
             })
           }
     }
-            let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('numberOfEmployees'))
 
 
 
 
  
       return (
-<Popover>
-<PopoverTrigger asChild>
-<div className="text-center font-medium">{employees ? employees : 'N/A'}</div>
-</PopoverTrigger>
-<PopoverContent>
-              <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
-                <FormField
-                  control={form.control}
-                  name="numberOfEmployees"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Employees</FormLabel>
-                      <FormControl>
-                        <Input
-                        type="number"
-                          placeholder="Employees"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                            
-                                  <div className='flex justify-between'>
-                <Button variant='secondary'>Cancel</Button>
-                <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-              </div>
-              </form>
-            </Form></PopoverContent>
-</Popover>
+        <EmployeesInput form={form} onSubmit={onSubmit} name={employees} />
       )
  
  
@@ -782,13 +521,17 @@ export const columns = [
 
     {
       accessorKey: "ContactName",
-          header: () => <div className="text-right">Contact Name</div>,
+          header: () => <div className="text-left">Contact Name</div>,
     cell: ({ row }) => {
       const contactId = row?.original?.ContactId
-      let contactName = row?.getValue("ContactName") ?? ''
+      let firstName = row?.getValue("ContactName")?.firstName ?? ''
+      let lastName = row?.getValue("ContactName")?.lastName ?? ''
       const salesforceAuth = row?.original?.salesforceAuth
       const FormSchema = z.object({
-          contactName: z
+          firstName: z
+          .string()
+          .max(160),
+          lastName: z
           .string()
           .max(160),
         })
@@ -797,7 +540,8 @@ export const columns = [
           const form = useForm({
             resolver: zodResolver(FormSchema),
             defaultValues: {
-              contactName: contactName,
+              firstName: firstName,
+              lastName: lastName
             }
         })
 
@@ -816,16 +560,26 @@ export const columns = [
             };
           const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
             
-          const onSubmit = async (data) => {
+          const onSubmit = async (data, setter, setIsOpen) => {
             let body = {}
-            const dirtyFields = form.formState?.defaultValues.numberOfEmployees !== parseInt(data?.numberOfEmployees)
-            if(dirtyFields) {
-            body = data
-            const newBody = JSON.stringify(body);
-            const res = await axios.patch(salesforceURL, newBody, options);
-          
+            let defaultValues = form?.formState?.defaultValues
+            const dirtyFields = form.formState?.dirtyFields
+            if(Object.keys(data).length > 0) {
+                if(Object.keys(dirtyFields).length > 0) {
+            for(const thing in data) {
+                if(dirtyFields[thing]) {
+                    defaultValues[thing] = data[thing]
+                    body[thing] = data[thing]
+                }
+            }
+          }
+
         }
-            if(dirtyFields) {
+        if(dirtyFields) {
+              const newBody = JSON.stringify(body);
+              const res = await axios.patch(salesforceURL, newBody, options);
+              setter(`${defaultValues?.firstName} ${defaultValues?.lastName}`)
+              setIsOpen(false)
             toast("You changed the following values:",
             {
               description: (
@@ -836,44 +590,14 @@ export const columns = [
             })
           }
     }
-            let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('name'))
+      let contactName = `${firstName} ${lastName}`
 
 
 
  
       return (
-<Popover>
-<PopoverTrigger asChild>
-<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{contactName}</div>
-</PopoverTrigger>
-<PopoverContent>
-<Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
-                <FormField
-                  control={form.control}
-                  name="contactName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Contact Name"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                            
-                                  <div className='flex justify-between'>
-                <Button variant='secondary'>Cancel</Button>
-                <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-              </div>
-              </form>
-            </Form></PopoverContent>
-</Popover>
+        <ContactNameInput form={form} name={contactName} onSubmit={onSubmit} />
+
       )
  
  
@@ -884,7 +608,7 @@ export const columns = [
     {
       accessorKey: "ContactEmail",
       size: 200,
-          header: () => <div className="text-center">Email</div>,
+          header: () => <div className="text-left">Email</div>,
     cell: ({ row }) => {
       const contactId = row?.original?.ContactId
       let email = row?.getValue("ContactEmail") ?? ''
@@ -921,7 +645,7 @@ export const columns = [
             };
           const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
             
-          const onSubmit = async (data) => {
+          const onSubmit = async (data, setter, setIsOpen) => {
             let body = {}
             const dirtyFields = form.formState?.defaultValues.numberOfEmployees !== parseInt(data?.numberOfEmployees)
             if(dirtyFields) {
@@ -931,6 +655,8 @@ export const columns = [
           
         }
             if(dirtyFields) {
+              setter(data["email"])
+              setIsOpen(false)
             toast("You changed the following values:",
             {
               description: (
@@ -941,7 +667,6 @@ export const columns = [
             })
           }
     }
-            let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('email'))
 
 
 
@@ -949,38 +674,7 @@ export const columns = [
 
  
       return (
-<Popover>
-<PopoverTrigger asChild>
-<div className="max-w-[200px] whitespace-nowrap text-ellipsis overflow-hidden text-left">{email}</div>
-</PopoverTrigger>
-<PopoverContent>
-<Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Email"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                            
-                                  <div className='flex justify-between'>
-                <Button variant='secondary'>Cancel</Button>
-                <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-              </div>
-              </form>
-            </Form></PopoverContent>
-</Popover>
+        <EmailInput form={form} onSubmit={onSubmit} name={email} />
       )
  
  
@@ -991,7 +685,7 @@ export const columns = [
 
     {
       accessorKey: "MobilePhone",
-          header: () => <div className="text-right">Phone</div>,
+          header: () => <div className="text-left">Phone</div>,
     cell: ({ row }) => {
       const contactId = row?.original?.ContactId
       let mobilePhone = row?.getValue("MobilePhone") ?? ''
@@ -1028,7 +722,7 @@ export const columns = [
             };
           const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
             
-          const onSubmit = async (data) => {
+          const onSubmit = async (data, setter, setIsOpen) => {
             let body = {}
             const dirtyFields = form.formState?.defaultValues.numberOfEmployees !== parseInt(data?.numberOfEmployees)
             if(dirtyFields) {
@@ -1038,6 +732,8 @@ export const columns = [
           
         }
             if(dirtyFields) {
+              setter(data['mobilePhone'])
+              setIsOpen(false)
             toast("You changed the following values:",
             {
               description: (
@@ -1048,43 +744,11 @@ export const columns = [
             })
           }
     }
-            let areFieldsDirty = form.formState?.defaultValues.numberOfEmployees !== parseInt(form.getValues('email'))
 
 
  
       return (
-<Popover>
-<PopoverTrigger asChild>
-<div className='max-w-[150px] whitespace-nowrap text-ellipsis overflow-hidden'>{mobilePhone}</div>
-</PopoverTrigger>
-<PopoverContent>
-<Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="w-3/3 h-84 space-y-6">
-                <FormField
-                  control={form.control}
-                  name="mobilePhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Phone"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                            
-                                  <div className='flex justify-between'>
-                <Button variant='secondary'>Cancel</Button>
-                <Button disabled={!areFieldsDirty} type="submit">Save</Button>
-              </div>
-              </form>
-            </Form></PopoverContent>
-</Popover>
+<PhoneInput form={form} onSubmit={onSubmit} name={mobilePhone}/>
       )
  
  

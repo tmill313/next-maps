@@ -98,7 +98,7 @@ export function DataTable({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    <div className="rounded-md border">
+    <div className="rounded-md border cursor-default">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -127,7 +127,6 @@ export function DataTable({
               >
                 {row.getVisibleCells().map((cell) => {
                   const size = cell.column.getSize()
-                  console.log(size)
                   return(
                   <TableCell className={`max-w-[${size}px]`} key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

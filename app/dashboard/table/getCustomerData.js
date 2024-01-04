@@ -24,7 +24,7 @@ const getCustomerData = async (setData, setIsLoading) => {
               },
             };
 
-        const CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,BillingAddress,Industry,NumberOfEmployees,AnnualRevenue,Owner.Name,Owner.Id,(Select+Id,MobilePhone,Name,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceData?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+        const CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,BillingAddress,Industry,NumberOfEmployees,AnnualRevenue,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceData?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
   
         let records
         let pickList
@@ -54,11 +54,14 @@ const getCustomerData = async (setData, setIsLoading) => {
                 Industry: item?.Industry,
                 NumberOfEmployees: item?.NumberOfEmployees,
                 AnnualRevenue: item?.AnnualRevenue,
-                ContactName: contact?.Name,
                 MobilePhone: contact?.MobilePhone,
                 ContactTitle: contact?.Title,
                 ContactEmail: contact?.Email,
                 ContactId: contact?.Id,
+                ContactName: {
+                  firstName: contact?.FirstName,
+                  lastName: contact?.LastName
+                },
                 Owner: item?.Owner
             }
         )})

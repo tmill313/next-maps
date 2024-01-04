@@ -1,8 +1,10 @@
 "use client"
-
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
@@ -48,19 +50,28 @@ const FormSchema = z.object({
   }),
 })
 
- const PickList = ({              
-    areFieldsDirty, 
-    salesforceURL,
-    options,
-    onSubmit,
-    pickList,
-    form
-}) => {
+ const PickList = ({     
+   areFieldsDirty, 
+   salesforceURL,
+   options,
+   onSubmit,
+   pickList,
+   form,
+   name
+  }) => {
+  const [open, setOpen] = useState(false)
+  const [industry, setIndustry] = useState(name)
 
 
   return (
+    <Popover open={open} onOpenChange={setOpen}>
+    <PopoverTrigger asChild>
+      <span>{industry}</span>
+
+    </PopoverTrigger>
+    <PopoverContent>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit((data) => onSubmit(data, setIndustry, setOpen))} className="space-y-6">
         <FormField
           control={form.control}
           name="industry"
@@ -95,6 +106,7 @@ const FormSchema = z.object({
                     />
                     <CommandEmpty>No industry found.</CommandEmpty>
                     <CommandGroup>
+                    <ScrollArea className="h-[200px] w-[350px]">
                       {pickList.map((industry) => (
                         <CommandItem
                           value={industry.label}
@@ -114,6 +126,7 @@ const FormSchema = z.object({
                           />
                         </CommandItem>
                       ))}
+                      </ScrollArea>
                     </CommandGroup>
                   </Command>
                 </PopoverContent>
@@ -128,6 +141,8 @@ const FormSchema = z.object({
                   </div>
       </form>
     </Form>
+    </PopoverContent>
+        </Popover>
   )
 }
 
