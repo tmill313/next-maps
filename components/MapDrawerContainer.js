@@ -16,7 +16,9 @@ const MapDrawerContainer = ({setIsOpen, isOpen, id, salesforceAuth}) => {
           'Access-Control-Allow-Headers': '*',
         },
       };
-    const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${id}`
+      const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Phone,Industry,BillingAddress,NumberOfEmployees,AnnualRevenue,LastActivityDate,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+Id='${id}'`
+
+    // const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${id}`
 
     useEffect(() => {
         if(id) {
@@ -27,7 +29,7 @@ const MapDrawerContainer = ({setIsOpen, isOpen, id, salesforceAuth}) => {
 
     const getAccount = async () => {
         const res = await axios.get(salesforceURL, options);
-        await setCurrentAccount(res?.data)
+        await setCurrentAccount(res?.data?.records[0])
         setIsLoading(false)
         console.log(res)
     }

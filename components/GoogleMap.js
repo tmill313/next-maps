@@ -1,6 +1,6 @@
 'use client'
 import React, {useRef, useState, useEffect} from 'react';
-import {APIProvider, Map, Marker, useMap, AdvancedMarker, Pin} from '@vis.gl/react-google-maps';
+import {APIProvider, Map, Marker, useMap, AdvancedMarker, Pin, useAdvancedMarkerRef} from '@vis.gl/react-google-maps';
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 import {MarkerClusterer} from '@googlemaps/markerclusterer';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -32,6 +32,7 @@ const GoogleMap = () => {
     const [customers, setCustomers] = useState(false)
     const [prospects, setProspects] = useState(true)
     const supabase = createClientComponentClient();
+    const [markerRef, marker] = useAdvancedMarkerRef();
 
     useEffect(() => {
       const getUser = async () => {
@@ -125,6 +126,11 @@ const GoogleMap = () => {
       getUser();
     }, [supabase, partners, customers, prospects]);
 
+    useEffect(() => {
+      console.log(marker, 'marker')
+      marker?.addListener('click', () => {console.log('yoyoyo')})
+    },[marker])
+
     const getPoints = (array, setter) => {
         array?.map((account, i) => {
             console.log(account)
@@ -178,22 +184,24 @@ const GoogleMap = () => {
         prospects={prospects}
         setProspects={setProspects}/>
 {customerPoints?.map((point, i) => {
-            return(  
+            return(  <div onMouseEnter={() => console.log('ypo')} key={point.key}>
             <AdvancedMarker
-            onMouseOver={() => console.log('yooo')}
+            
             position={point}
             onClick={() => handlePointClick(point.id)}
-            key={point.key}>
+            >
             <Pin
             background={'#2196f3'}
             borderColor={'#1976d2'}
             glyphColor={'#0d47a1'}></Pin>
               </AdvancedMarker>
+              </div>
 )}  )}
 
 {prospectPoints?.map((point, i) => {
             return(  
             <AdvancedMarker
+            ref={markerRef}
             onMouseOver={() => console.log('yooo')}
             position={point}
             onClick={() => handlePointClick(point.id)}
