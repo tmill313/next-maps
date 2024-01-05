@@ -22,7 +22,7 @@ import MapDrawerForm from "./MapDrawerForm"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import useMediaQuery from "./hooks/useMediaQuery"
 
-const MapDrawer = ({isOpen, currentAccount, setIsOpen, isLoading, salesforceAuth}) => {
+const MapDrawer = ({isOpen, setCurrentPoint, currentAccount, setIsOpen, isLoading, salesforceAuth}) => {
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
 return (
@@ -36,7 +36,7 @@ return (
         Edit account info, then click save.
       </SheetDescription>
     </SheetHeader>
-    {!isLoading && <MapDrawerForm salesforceAuth={salesforceAuth} setIsOpen={setIsOpen}  account={currentAccount}/>}
+    {!isLoading && <MapDrawerForm setCurrentPoint={setCurrentPoint} salesforceAuth={salesforceAuth} setIsOpen={setIsOpen}  account={currentAccount}/>}
   </ScrollArea>
   </SheetContent>
 </Sheet>)
@@ -51,7 +51,7 @@ return (
       Edit account info, then click save.
       </DrawerDescription>
     </DrawerHeader>
-    {!isLoading && <MapDrawerForm salesforceAuth={salesforceAuth} setIsOpen={setIsOpen}  account={currentAccount}/>}
+    {!isLoading && <MapDrawerForm setCurrentPoint={setCurrentPoint} salesforceAuth={salesforceAuth} setIsOpen={setIsOpen}  account={currentAccount}/>}
     </ScrollArea>
   </DrawerContent>
 </Drawer>

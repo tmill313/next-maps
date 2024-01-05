@@ -50,10 +50,6 @@ export default function Dashboard() {
   
 
 
- 
-const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/query?q=SELECT+id,name,billingAddress+FROM+Account`
-
-
   const salesforceLoginURL = `https://login.salesforce.com/services/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_SALESFORCE_CONSUMER_KEY}&redirect_uri=${config.baseURL}/api/salesforce&response_type=code`
   
 if(isLoading) return

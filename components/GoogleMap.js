@@ -223,7 +223,7 @@ const GoogleMap = () => {
 )}  )}
     </Map>
   </APIProvider>
-  <MapDrawerContainer setIsOpen={setIsOpen} salesforceAuth={salesforce} isOpen={currentPoint && isOpen} id={currentPoint}/>
+  <MapDrawerContainer setCurrentPoint={setCurrentPoint} setIsOpen={setIsOpen} salesforceAuth={salesforce} isOpen={currentPoint && isOpen} id={currentPoint}/>
 
   </div>)
 

@@ -20,7 +20,7 @@ import { toast } from "sonner"
 
 
 
-const MapDrawerForm = ({account, salesforceAuth, setIsOpen}) => {
+const MapDrawerForm = ({account, setCurrentPoint, salesforceAuth, setIsOpen}) => {
     console.log(account)
     const FormSchema = z.object({
         name: z.string().optional(),
@@ -42,14 +42,9 @@ const MapDrawerForm = ({account, salesforceAuth, setIsOpen}) => {
 
       const contact = account?.Contacts.records[0]
 
-      const formatted = new Intl.NumberFormat("en-US", {
-        maximumFractionDigits: 0, 
-        minimumFractionDigits: 0, 
-        style: "currency",
-        currency: "USD",
-      }).format(account?.AnnualRevenue)
+      const formatted = account?.AnnualRevenue ? parseInt(account?.AnnualRevenue).toLocaleString('en-US', {maximumFractionDigits:2}) : 0
 
-      const employees = account?.NumberOfEmployees ? parseInt(account?.NumberOfEmployees).toLocaleString('en-US', {maximumFractionDigits:2}) : account?.NumberOfEmployees
+      const employees = account?.NumberOfEmployees ? parseInt(account?.NumberOfEmployees).toLocaleString('en-US', {maximumFractionDigits:2}) : 0
 
         const form = useForm({
           resolver: zodResolver(FormSchema),
@@ -80,35 +75,53 @@ const MapDrawerForm = ({account, salesforceAuth, setIsOpen}) => {
               'Access-Control-Allow-Headers': '*',
             },
           };
+
+          const contactId = contact?.Id
         const salesforceURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/${account?.Id}`
+        const contactURL = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Contact/${contactId}`
     
 
         async function onSubmit(data) {
+          let contactArray = ['firstName', 'lastName', 'email', 'mobilePhone']
+            let contactBody ={}
             let body = {}
             console.log(Object.keys(data).length > 0)
             if(Object.keys(data).length > 0) {
                 const dirtyFields = form.formState?.dirtyFields
             for(const thing in data) {
                 if(dirtyFields[thing]) {
+                  if(contactArray?.includes(thing)) {
+                    contactBody[thing] = data[thing]
+                  } else {
                     body[thing] = data[thing]
+                  }
                 }
             }
+
+            const newContactBody = JSON.stringify(contactBody)
             const newBody = JSON.stringify(body);
             console.log(newBody)
             const res = await axios.patch(salesforceURL, newBody, options);
-            setIsOpen(false)
-            console.log(res)
-        }
             console.log()
+            let combinedObj = body
+            if(Object.keys(contactBody).length > 0) {
+              const contactRes = await axios.patch(contactURL, newContactBody, options);
+              combinedObj = {...body, ...contactBody}
+            }
+            setIsOpen(false)
+            setCurrentPoint(null)
+            console.log(res)
             toast("You changed the following values:",
             {
               description: (
                 <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                  <code className="text-white">{JSON.stringify(body, null, 2)}</code>
+                  <code className="text-white">{JSON.stringify(combinedObj, null, 2)}</code>
                 </pre>
               ),
             })
           }
+        }
+
 
           if(!account) return null
 return (
@@ -150,7 +163,7 @@ return (
             <FormItem className='my-5 mx-3'>
               <FormLabel>Revenue</FormLabel>
               <FormControl>
-                <Input placeholder="Revenue" {...field} />
+                <Input type='number' placeholder="Revenue" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,7 +176,7 @@ return (
             <FormItem className='my-5 mx-3'>
               <FormLabel>Employees</FormLabel>
               <FormControl>
-                <Input placeholder="Employees" {...field} />
+                <Input type='number' placeholder="Employees" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -324,7 +337,7 @@ return (
         />
         
         </div>
-        <div className="flex justify-end fixed bottom-0 right-0 px-16 py-8 w-1/2">
+        <div className="flex justify-end fixed bottom-0 right-0 px-16 py-4 w-1/2">
         <Button type="submit">Save</Button>
         </div>
       </form>

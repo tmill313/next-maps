@@ -4,7 +4,7 @@ import MapDrawer from "./MapDrawer";
 import axios from "axios";
 
 
-const MapDrawerContainer = ({setIsOpen, isOpen, id, salesforceAuth}) => {
+const MapDrawerContainer = ({setIsOpen, setCurrentPoint, isOpen, id, salesforceAuth}) => {
     console.log(id)
     const [currentAccount, setCurrentAccount] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -35,7 +35,7 @@ const MapDrawerContainer = ({setIsOpen, isOpen, id, salesforceAuth}) => {
     }
 if(isLoading) return null
     return(
-        <MapDrawer salesforceAuth={salesforceAuth} setIsOpen={setIsOpen} currentAccount={currentAccount} isOpen={isOpen} />
+        <MapDrawer setCurrentPoint={setCurrentPoint} salesforceAuth={salesforceAuth} setIsOpen={setIsOpen} currentAccount={currentAccount} isOpen={isOpen} />
     )
 }
 
