@@ -44,7 +44,7 @@ return (
 (
   <Drawer shouldScaleBackground open={isOpen} onOpenChange={setIsOpen}>
   <DrawerContent className='h-3/4'>
-  <ScrollArea className="h-full pb-12 px-4 pt-4">
+  <ScrollArea className="h-full px-4 pt-4">
     <DrawerHeader className="text-left">
       <DrawerTitle>{currentAccount?.Name}</DrawerTitle>
       <DrawerDescription>
