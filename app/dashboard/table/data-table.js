@@ -27,15 +27,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import CustomFieldPopover from "./CustomFieldPopover"
 
 export function DataTable({
   columns,
   data,
+  isOpen,
+  setIsOpen,
+  setIsRefreshTrigger
 }) {
     const [sorting, setSorting] = useState([])
     const [columnFilters, setColumnFilters] = useState([])
     const [columnVisibility, setColumnVisibility] = useState({})
     const [rowSelection, setRowSelection] = useState({})
+
 
 
   const table = useReactTable({
@@ -60,15 +65,20 @@ export function DataTable({
 
   return (
     <div>
-        <div className="flex items-center py-4">
+        <div className="flex justify-between items-center py-4">
             <Input
             placeholder="Filter by name"
-            value={(table.getColumn("Name")?.getFilterValue()) ?? ""}
+            value={(table?.getColumn("Name")?.getFilterValue()) ?? ""}
             onChange={(event) =>
                 table.getColumn("Name")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
             />
+            <div>
+            <CustomFieldPopover setIsRefreshTrigger={setIsRefreshTrigger}/>
+        <Button onClick={() => setIsOpen(!isOpen)} variant="secondary" className="ml-auto mr-4">
+        Add filter
+      </Button>
       <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -97,6 +107,7 @@ export function DataTable({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       </div>
     <div className="rounded-md border cursor-default">
       <Table>

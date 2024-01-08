@@ -24,7 +24,7 @@ const obj = {
    
     return (
       <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger asChild>
           <Button className="relative" variant="outline">Views</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent onCloseAutoFocus={e => e.preventDefault()} align="start" forceMount className="w-56">
@@ -33,6 +33,7 @@ const obj = {
             onSelect={e => e.preventDefault()}
             onCheckedChange={setPartners}
           >
+            <div className="h-3 w-3 bg-[#87986a] rounded-full mr-1"/>
             Partners
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
@@ -40,6 +41,7 @@ const obj = {
             onCheckedChange={setCustomers}
             onSelect={e => e.preventDefault()}
           >
+            <div className="h-3 w-3 bg-[#2196f3] rounded-full mr-1"/>
             Customers
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
@@ -47,6 +49,7 @@ const obj = {
             onCheckedChange={setProspects}
             onSelect={e => e.preventDefault()}
           >
+            <div className="h-3 w-3 bg-[#EA4335] rounded-full mr-1"/>
             Prospects
           </DropdownMenuCheckboxItem>
         </DropdownMenuContent>

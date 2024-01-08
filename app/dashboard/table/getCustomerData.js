@@ -1,11 +1,20 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import axios from "axios";
+import { custom } from "zod";
+import getCustomFieldInput from "./components/CustomFieldInput";
+import CustomFieldInput from "./components/CustomFieldInput";
 
-const getCustomerData = async (setData, setIsLoading) => {
+const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger) => {
     const supabase = createClientComponentClient();
 
           const { loading: userLoading, data } = await supabase.auth.getUser()
           let user = data?.user
+
+          const { data: profileData } = await supabase
+          .from("profiles")
+          .select(`*`)
+          .eq("id", user?.id)
+          .single();
     
           const { data: salesforceData } = await supabase
           .from("salesforce_auth")
@@ -31,7 +40,6 @@ const getCustomerData = async (setData, setIsLoading) => {
           try {
             const industryUrl = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/describe`
               const res = await axios.get(CUSTOMER_URL, options);
-              console.log(res.data)
               let industryRes = await axios.get(industryUrl, options);
               let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
               pickList = industryPick
@@ -40,10 +48,36 @@ const getCustomerData = async (setData, setIsLoading) => {
           } catch (error) {
               console.log(error)
           }
+          let tempHeaders = []
+          let tempFields = {}
+          try {
+            const { data: columnData } = await supabase
+            .from("custom_column_defs")
+            .select(`*, custom_column_fields(*)`)
+            .eq("profile_id", profileData?.id)
+            const newColumns = columnData?.map(column => {
+              let fields = column?.custom_column_fields?.map(field => {
+                tempFields[`${field?.account_id}-${column?.column_name}`] = {
+                  columnName: column?.column_name,
+                  fieldValue: field?.value,
+                  fieldId: field?.id,
+                  accountId: field?.account_id
+                }
+              })              
+              tempHeaders.push(column?.column_name)
+              return getCustomFieldInput(column?.column_name, column?.id, setIsRefreshTrigger)
+            })
+             setCustomColumns(newColumns)
+
+
+          } catch (error) {
+              console.log(error)
+          }
+          
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
-            console.log(item)
-            return ({
+
+            let tempObj = {
                 Name: item.Name,
                 id: item.Id,
                 amount: 100,
@@ -64,8 +98,12 @@ const getCustomerData = async (setData, setIsLoading) => {
                 },
                 Owner: item?.Owner
             }
-        )})
-        console.log(newData)
+            tempHeaders.map(header => {
+              tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
+            })
+            return tempObj
+        })
+
 await setData(newData)
 setIsLoading(false)
 

@@ -1,30 +1,11 @@
 'use client'
-import {useState, useEffect} from 'react'
 import { MoreHorizontal, ArrowUpDown} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import axios from 'axios'
-import { Badge } from "@/components/ui/badge"
-
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import { toast } from "sonner"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,8 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from '@/components/ui/input'
 import PickList from '@/components/PickList'
 import NameInput from './components/NameInput'
 import AddressForm from './components/AddressForm'
@@ -46,29 +25,6 @@ import PhoneInput from './components/PhoneInput'
 
 
 export const columns = [
-    // {
-    //     id: "select",
-    //     header: ({ table }) => (
-    //       <Checkbox
-    //         checked={
-    //           table.getIsAllPageRowsSelected() ||
-    //           (table.getIsSomePageRowsSelected() && "indeterminate")
-    //         }
-    //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //         aria-label="Select all"
-    //       />
-    //     ),
-    //     cell: ({ row }) => (
-    //       <Checkbox
-    //         checked={row.getIsSelected()}
-    //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //         aria-label="Select row"
-    //       />
-    //     ),
-    //     enableSorting: false,
-    //     enableHiding: false,
-    //   },
-
 
       {
         accessorKey: "Owner",
