@@ -54,7 +54,7 @@ const CustomFieldPopover = ({setIsRefreshTrigger}) => {
                 setIsRefreshTrigger(prevState => !prevState)
               }
             } else {
-                toast(<div className="flex items-center"><AlertTriangle color="#eed202" /><div className="ml-2">A column with the name "{name}" already exists.</div></div>)
+                toast(<div className="flex items-center"><AlertTriangle color="#eed202" /><div className="ml-2">A column with the name &quot;{name}&quot; already exists.</div></div>)
                 console.error(`A column with the name "${name}" already exists`)
             }
  

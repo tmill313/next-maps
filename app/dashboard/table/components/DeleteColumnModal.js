@@ -48,6 +48,7 @@ const DeleteColumnModal = ({header, columnId, setIsRefreshTrigger}) => {
           <DialogTrigger asChild>
            <Button
                  variant="ghost"
+                 className='text-left'
                 >
                 {header}
                  <Trash2 className="ml-2 h-4 w-4" />
