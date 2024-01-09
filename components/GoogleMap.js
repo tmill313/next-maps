@@ -188,7 +188,7 @@ const GoogleMap = () => {
               <path class="KWCFZI-maps-pin-view-default-glyph" d="M13 18C15.7614 18 18 15.7614 18 13C18 10.2386 15.7614 8 13 8C10.2386 8 8 10.2386 8 13C8 15.7614 10.2386 18 13 18Z" fill="rgb(25, 118, 210)"></path> \
             </g> \
           </svg>',
-        anchor: new window.google.maps.Point(0, 20),
+        anchor: new window.google.maps.Point(0, 10),
       };
            return (
             <MapHoverBox point={point} key={point?.id} svgMarker={svgMarker} handlePointClick={handlePointClick} />
@@ -211,7 +211,7 @@ const GoogleMap = () => {
               <path class="KWCFZI-maps-pin-view-default-glyph" d="M13 18C15.7614 18 18 15.7614 18 13C18 10.2386 15.7614 8 13 8C10.2386 8 8 10.2386 8 13C8 15.7614 10.2386 18 13 18Z" fill="rgb(113, 131, 85)"></path> \
             </g> \
           </svg>',
-        anchor: new google.maps.Point(0, 20),
+        anchor: new window.google.maps.Point(0, 10),
       };
             return(  
 <MapHoverBox point={point} key={point?.id} svgMarker={svgMarker} handlePointClick={handlePointClick} />
