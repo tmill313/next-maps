@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme={config.colors.theme} className={font.className}>
       {config.domainName && (
         <head>
-          <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}></script>
+          <script async defer src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}></script>
           <meta name="google-site-verification" content="Qx5iQLYtfASM-0arxL66ZXtDSAob61re8bAYyc2nKgw" />
           <PlausibleProvider domain={config.domainName} />
         </head>
