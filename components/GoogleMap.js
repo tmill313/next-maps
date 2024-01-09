@@ -46,7 +46,14 @@ const GoogleMap = () => {
     const [prospects, setProspects] = useState(true)
     const supabase = createClientComponentClient();
     const markerRef = useAdvancedMarkerRef(null);
+    const mapsLib = useMapsLibrary('maps');
     
+    useEffect(() => {
+      if (!mapsLib) return;
+  
+      console.log(mapsLib)
+      // ...
+    }, [mapsLib]);
 
     useEffect(() => {
       const getUser = async () => {
@@ -181,10 +188,10 @@ const GoogleMap = () => {
               <path class="KWCFZI-maps-pin-view-default-glyph" d="M13 18C15.7614 18 18 15.7614 18 13C18 10.2386 15.7614 8 13 8C10.2386 8 8 10.2386 8 13C8 15.7614 10.2386 18 13 18Z" fill="rgb(25, 118, 210)"></path> \
             </g> \
           </svg>',
-        anchor: new google.maps.Point(0, 20),
+        anchor: new window.google.maps.Point(0, 20),
       };
            return (
-            <MapHoverBox point={point} svgMarker={svgMarker} handlePointClick={handlePointClick} />
+            <MapHoverBox point={point} key={point?.id} svgMarker={svgMarker} handlePointClick={handlePointClick} />
           )
 })
      }
@@ -192,7 +199,7 @@ const GoogleMap = () => {
 
 {prospectPoints?.map((point, i) => {
             return(  
-              <MapHoverBox point={point} handlePointClick={handlePointClick} />
+              <MapHoverBox key={point?.id} point={point} handlePointClick={handlePointClick} />
 )}  )}
 {partnerPoints?.map((point, i) => {
       const svgMarker = {
@@ -207,7 +214,7 @@ const GoogleMap = () => {
         anchor: new google.maps.Point(0, 20),
       };
             return(  
-<MapHoverBox point={point} svgMarker={svgMarker} handlePointClick={handlePointClick} />
+<MapHoverBox point={point} key={point?.id} svgMarker={svgMarker} handlePointClick={handlePointClick} />
 
             
 )}  )}
