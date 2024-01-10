@@ -8,6 +8,8 @@ import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "@/components/ui/sonner"
 import { Tooltip } from "react-tooltip";
 import config from "@/config";
+import CurrentUserContext from "@/app/contexts/CurrentUserContext";
+import axios from 'axios'
 
 // Crisp customer chat support:
 // This component is separated from ClientLayout because it needs to be wrapped with <SessionProvider> to use useSession() hook
@@ -16,6 +18,8 @@ const CrispChat = () => {
 
   const supabase = createClientComponentClient();
   const [data, setData] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [salesforceAuth, setSalesforceAuth] = useState(null);
 
   // This is used to get the user data from Supabase Auth (if logged in) => user ID is used to identify users in Crisp
   useEffect(() => {
@@ -23,7 +27,6 @@ const CrispChat = () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
       if (session) {
         setData(session.user);
       }
@@ -66,14 +69,67 @@ const CrispChat = () => {
 // 3. Tooltip: Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content=""
 // 4. CrispChat: Set Crisp customer chat support (see above)
 const ClientLayout = ({ children }) => {
+  const supabase = createClientComponentClient();
+  const [data, setData] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [salesforceAuth, setSalesforceAuth] = useState(null);
+  const [industryPicklist, setIndustryPicklist] = useState([])
+
+  // This is used to get the user data from Supabase Auth (if logged in) => user ID is used to identify users in Crisp
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      let user = session?.user
+
+      const { data: profileData } = await supabase
+      .from("profiles")
+      .select(`*`)
+      .eq("id", user?.id)
+      .single();
+
+      const { data: salesforceData } = await supabase
+      .from("salesforce_auth")
+      .select(`*`)
+      .eq("id", user?.id)
+      .single();
+      const options = {
+        headers: {
+          Authorization: `Bearer ${salesforceData?.access_token}`,
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          'Access-Control-Allow-Headers': '*',
+        },
+      };
+
+      const industryUrl = `${salesforceData?.instance_url}/services/data/v59.0/sobjects/Account/describe`
+      let industryRes = await axios.get(industryUrl, options);
+      let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
+        
+        setIndustryPicklist([...industryPick])
+        setData(session?.user);
+        setProfile(profileData);
+        setSalesforceAuth(salesforceData);
+    };
+    getUser();
+  }, []);
   return (
     <>
       {/* Show a progress bar at the top when navigating between pages */}
       <NextTopLoader color={config.colors.main} showSpinner={false} />
 
       {/* Content inside app/page.js files  */}
+      <CurrentUserContext.Provider
+      value={{
+        profile,
+        data,
+        salesforceAuth,
+        industryPicklist
+      }}
+      >
       {children}
-
+      </CurrentUserContext.Provider>
       {/* Show Success/Error messages anywhere from the app with toast() */}
       <Toaster
         toastOptions={{

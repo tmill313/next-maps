@@ -1,11 +1,12 @@
 
 'use client'
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useContext} from 'react'
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import getCustomerData from './getCustomerData';
 import Spinner from '@/components/Spinner';
+import CurrentUserContext from '@/app/contexts/CurrentUserContext';
 
 
 
@@ -17,7 +18,9 @@ const CustomerTable = ({isOpen, setIsOpen}) => {
     const [isLoading, setIsLoading] = useState(true)
     const [isRefreshTrigger, setIsRefreshTrigger] = useState(false)
     const supabase = createClientComponentClient();
- 
+    const currentUser = useContext(CurrentUserContext);
+
+ console.log(currentUser)
     console.log('here')
     useEffect(() => {
         setIsLoading(true)

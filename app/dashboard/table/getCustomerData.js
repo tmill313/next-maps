@@ -73,10 +73,28 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
           } catch (error) {
               console.log(error)
           }
+          const colorInfo = {}
+          try {
+            const { data: colorData } = await supabase
+            .from("row_colors")
+            .select(`*`)
+            .eq("profile_id", profileData?.id)
+            const newColumns = colorData?.map(color => {
+              console.log(color)
+                colorInfo[`${color?.account_id}`] = {
+                  rowColor: color?.color_hex,
+                  accountId: color?.account_id
+                }           
+            })
+
+
+          } catch (error) {
+              console.log(error)
+          }
           
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
-
+            console.log(colorInfo)
             let tempObj = {
                 Name: item.Name,
                 id: item.Id,
@@ -96,11 +114,13 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
                   firstName: contact?.FirstName,
                   lastName: contact?.LastName
                 },
-                Owner: item?.Owner
+                Owner: item?.Owner,
+                rowColor: colorInfo[item?.Id]
             }
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
             })
+            console.log(tempObj)
             return tempObj
         })
 

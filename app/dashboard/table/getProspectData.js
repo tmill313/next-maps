@@ -75,6 +75,28 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
           } catch (error) {
               console.log(error)
           }
+
+          const colorInfo = {}
+          try {
+            const { data: colorData } = await supabase
+            .from("row_colors")
+            .select(`*`)
+            .eq("profile_id", profileData?.id)
+            const newColumns = colorData?.map(color => {
+              console.log(color)
+                colorInfo[`${color?.account_id}`] = {
+                  rowColor: color?.color_hex,
+                  accountId: color?.account_id,
+                  rowColor: colorInfo[item?.Id]
+                }           
+            })
+
+
+          } catch (error) {
+              console.log(error)
+          }
+
+
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
             let tempObj = {

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import axios from "axios";
 import Link from "next/link"
 import ButtonAccount from "@/components/ButtonAccount";
@@ -8,6 +8,7 @@ import ButtonGradient from "@/components/ButtonGradient";
 import config from "@/config";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import GoogleMap from "@/components/GoogleMap";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
 
 export const dynamic = "force-dynamic";
@@ -15,9 +16,11 @@ export const dynamic = "force-dynamic";
 export default function Dashboard() {
   const supabase = createClientComponentClient();
   const [profile, setProfile] = useState(null);
+  const [user, setUser] = useState(null);
   const [salesforceAuth, setSalesforceAuth] =useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [points, setPoints] = useState([])
+
 
 
   useEffect(() => {
@@ -38,6 +41,7 @@ export default function Dashboard() {
       .eq("id", user?.id)
       .single();
 
+      setUser(user)
       setProfile(profileData)
       setSalesforceAuth(salesforceData)
       setIsLoading(false)
@@ -55,6 +59,13 @@ export default function Dashboard() {
 if(isLoading) return
 
   return (
+    <CurrentUserContext.Provider
+    value={{
+      profile,
+      user,
+      salesforceAuth
+    }}
+  >
     <main className="min-h-screen p-8 pb-24">
       <section className="max-w-xl mx-auto space-y-8">
         <ButtonAccount />
@@ -82,6 +93,7 @@ if(isLoading) return
         }
       </section>
     </main>
+    </CurrentUserContext.Provider>
   );
 }
 
