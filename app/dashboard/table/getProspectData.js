@@ -86,8 +86,7 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
               console.log(color)
                 colorInfo[`${color?.account_id}`] = {
                   rowColor: color?.color_hex,
-                  accountId: color?.account_id,
-                  rowColor: colorInfo[item?.Id]
+                  accountId: color?.account_id
                 }           
             })
 
@@ -120,7 +119,8 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
                 ContactTitle: contact?.Title,
                 ContactEmail: contact?.Email,
                 ContactId: contact?.Id,
-                Owner: item?.Owner
+                Owner: item?.Owner,
+                rowColor: colorInfo[item?.Id]
             }
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
