@@ -1,3 +1,5 @@
+'use client'
+import checkError from "@/app/utils/checkError";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import axios from "axios";
 import getCustomFieldInput from "./components/CustomFieldInput";
@@ -66,6 +68,7 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
               records = res?.data?.records
 
           } catch (error) {
+            checkError(error)
               console.log(error)
           }
 

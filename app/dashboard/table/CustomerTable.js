@@ -23,7 +23,7 @@ const CustomerTable = ({isOpen, setIsOpen, filters, setFilters}) => {
     useEffect(() => {
         setIsLoading(true)
         getCustomerData(setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters)
-        console.log(filters)
+        console.log(data)
     }, [supabase, isRefreshTrigger, filters])
     const newColumns = [...columns, ...customColumns]
 

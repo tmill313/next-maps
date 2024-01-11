@@ -2,6 +2,7 @@
 import {useEffect, useState} from 'react'
 import MapDrawer from "./MapDrawer";
 import axios from "axios";
+import checkError from '@/app/utils/checkError';
 
 
 const MapDrawerContainer = ({setIsOpen, setCurrentPoint, isOpen, id, salesforceAuth}) => {
@@ -28,10 +29,15 @@ const MapDrawerContainer = ({setIsOpen, setCurrentPoint, isOpen, id, salesforceA
     }, [id])
 
     const getAccount = async () => {
+        try {
         const res = await axios.get(salesforceURL, options);
         await setCurrentAccount(res?.data?.records[0])
         setIsLoading(false)
         console.log(res)
+        } catch(error) {
+            checkError(Error)
+            console.log(error)
+        }
     }
 if(isLoading) return null
     return(

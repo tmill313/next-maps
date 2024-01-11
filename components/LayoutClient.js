@@ -10,6 +10,7 @@ import { Tooltip } from "react-tooltip";
 import config from "@/config";
 import CurrentUserContext from "@/app/contexts/CurrentUserContext";
 import axios from 'axios'
+import checkError from "@/app/utils/checkError";
 
 // Crisp customer chat support:
 // This component is separated from ClientLayout because it needs to be wrapped with <SessionProvider> to use useSession() hook
@@ -102,9 +103,14 @@ const ClientLayout = ({ children }) => {
           'Access-Control-Allow-Headers': '*',
         },
       };
-
+      let industryRes
       const industryUrl = `${salesforceData?.instance_url}/services/data/v59.0/sobjects/Account/describe`
-      let industryRes = await axios.get(industryUrl, options);
+      try {
+      industryRes = await axios.get(industryUrl, options);
+      } catch (error) {
+        checkError(error)
+        console.log(error)
+      }
       let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
         
         setIndustryPicklist([...industryPick])

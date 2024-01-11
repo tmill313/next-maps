@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import checkError from "@/app/utils/checkError"
 
 
 
@@ -101,11 +102,23 @@ const MapDrawerForm = ({account, setCurrentPoint, salesforceAuth, setIsOpen}) =>
             const newContactBody = JSON.stringify(contactBody)
             const newBody = JSON.stringify(body);
             console.log(newBody)
-            const res = await axios.patch(salesforceURL, newBody, options);
+            let res
+            try {
+            res = await axios.patch(salesforceURL, newBody, options);
+            } catch (error) {
+              checkError(error)
+              console.log(error)
+            }
             console.log()
             let combinedObj = body
             if(Object.keys(contactBody).length > 0) {
-              const contactRes = await axios.patch(contactURL, newContactBody, options);
+              let contactRes
+              try {   
+                contactRes = await axios.patch(contactURL, newContactBody, options);
+              } catch (error) {
+                checkError(error)
+                console.log(error)
+              }
               combinedObj = {...body, ...contactBody}
             }
             setIsOpen(false)

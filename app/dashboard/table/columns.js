@@ -23,6 +23,7 @@ import ContactNameInput from './components/ContactNameInput'
 import EmailInput from './components/EmailInput'
 import PhoneInput from './components/PhoneInput'
 import { Checkbox } from "@/components/ui/checkbox"
+import checkError from "@/app/utils/checkError"
 
 
 export const columns = [
@@ -125,7 +126,14 @@ export const columns = [
                     }
                 }
                 const newBody = JSON.stringify(body);
-                const res = await axios.patch(salesforceURL, newBody, options);
+                let res
+                try {
+                  
+                  res = await axios.patch(salesforceURL, newBody, options);
+                } catch (error) {
+                  checkError(error)
+                  console.log(error)
+                }
               }
             }
                 if(Object.keys(dirtyFields).length > 0) {
@@ -206,7 +214,13 @@ export const columns = [
               if(dirtyFields) {
               body = data
               const newBody = JSON.stringify(body);
-              const res = await axios.patch(salesforceURL, newBody, options);
+              let res
+              try {
+                res = await axios.patch(salesforceURL, newBody, options);
+              } catch (error) {
+                checkError(error)
+                console.log(error)
+              }
 
             
           }
@@ -308,7 +322,14 @@ export const columns = [
                               }
                           }
                           const newBody = JSON.stringify(body);
-                          const res = await axios.patch(salesforceURL, newBody, options);
+                          let res
+                          try {
+                            res = await axios.patch(salesforceURL, newBody, options);
+                            
+                          } catch (error) {
+                            checkError(error)
+                            console.log(error)
+                          }
                         }
                       }
                           if(Object.keys(dirtyFields).length > 0) {
@@ -392,7 +413,14 @@ export const columns = [
             if(dirtyFields) {
             body = data
             const newBody = JSON.stringify(body);
-            const res = await axios.patch(salesforceURL, newBody, options);
+            let res
+            try {
+              res = await axios.patch(salesforceURL, newBody, options);
+              
+            } catch (error) {
+              checkError(error)
+              console.log(error)
+            }
           
         }
             if(dirtyFields) {
@@ -469,7 +497,14 @@ export const columns = [
             if(dirtyFields) {
             body = data
             const newBody = JSON.stringify(body);
-            const res = await axios.patch(salesforceURL, newBody, options);
+            let res
+            try {
+              res = await axios.patch(salesforceURL, newBody, options);
+              
+            } catch (error) {
+              checkError(error)
+              console.log(error)
+            }
           
         }
             if(dirtyFields) {
@@ -556,7 +591,14 @@ export const columns = [
         }
         if(dirtyFields) {
               const newBody = JSON.stringify(body);
-              const res = await axios.patch(salesforceURL, newBody, options);
+              let res
+              try {
+                res = await axios.patch(salesforceURL, newBody, options);
+                
+              } catch (error) {
+                checkError(error)
+                console.log(error)
+              }
               setter(`${defaultValues?.firstName} ${defaultValues?.lastName}`)
               setIsOpen(false)
             toast("You changed the following values:",
@@ -630,7 +672,14 @@ export const columns = [
             if(dirtyFields) {
             body = data
             const newBody = JSON.stringify(body);
-            const res = await axios.patch(salesforceURL, newBody, options);
+            let res
+            try {
+              res = await axios.patch(salesforceURL, newBody, options);
+              
+            } catch (error) {
+              checkError(error)
+              console.log(error)
+            }
           
         }
             if(dirtyFields) {
@@ -707,7 +756,14 @@ export const columns = [
             if(dirtyFields) {
             body = data
             const newBody = JSON.stringify(body);
-            const res = await axios.patch(salesforceURL, newBody, options);
+            let res
+            try {
+              res = await axios.patch(salesforceURL, newBody, options);
+              
+            } catch (error) {
+              checkError(error)
+              console.log(error)
+            }
           
         }
             if(dirtyFields) {

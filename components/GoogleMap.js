@@ -29,6 +29,7 @@ import MapMenu from './MapMenu';
 import SmallNav from '@/app/dashboard/SmallNav';
 import Spinner from './Spinner';
 import MapHoverBox from './MapHoverBox';
+import checkError from '@/app/utils/checkError';
 
 const ALL_ACCOUNTS = 'accounts'
 const CUSTOMERS = 'customers'
@@ -108,6 +109,7 @@ const GoogleMap = () => {
             }
             setIsLoading(false)
         } catch (error) {
+          checkError(error)
             console.log(error)
         }
       };

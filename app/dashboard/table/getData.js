@@ -1,6 +1,7 @@
 import axios from "axios";
 import getCustomFieldInput from "./components/CustomFieldInput";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import checkError from "@/app/utils/checkError";
 
 const getData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, salesforceRoute, salesforceAuth, profileData, pickList) => {
     const supabase = createClientComponentClient();
@@ -22,6 +23,7 @@ const getData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrig
               records = res?.data?.records
 
           } catch (error) {
+            checkError(error)
               console.log(error)
           }
           let tempHeaders = []

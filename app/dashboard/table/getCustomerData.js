@@ -1,3 +1,4 @@
+import checkError from "@/app/utils/checkError";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import axios from "axios";
 import { custom } from "zod";
@@ -59,12 +60,14 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
           try {
             const industryUrl = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/describe`
               const res = await axios.get(CUSTOMER_URL, options);
+              console.log(res)
               let industryRes = await axios.get(industryUrl, options);
               let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
               pickList = industryPick
               records = res?.data?.records
 
           } catch (error) {
+            checkError(error)
               console.log(error)
           }
           let tempHeaders = []

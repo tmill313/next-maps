@@ -1,6 +1,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import getCustomFieldInput from "./components/CustomFieldInput";
 import axios from "axios";
+import checkError from "@/app/utils/checkError";
 
 const getPartnerData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters) => {
     const supabase = createClientComponentClient();
@@ -61,6 +62,7 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
               records = res?.data?.records
 
           } catch (error) {
+            checkError(error)
               console.log(error)
           }
 
