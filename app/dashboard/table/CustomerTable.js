@@ -11,7 +11,7 @@ import CurrentUserContext from '@/app/contexts/CurrentUserContext';
 
 
 
-const CustomerTable = ({isOpen, setIsOpen}) => {
+const CustomerTable = ({isOpen, setIsOpen, filters, setFilters}) => {
 
     const [data, setData] = useState([])
     const [customColumns, setCustomColumns] = useState([])
@@ -20,19 +20,17 @@ const CustomerTable = ({isOpen, setIsOpen}) => {
     const supabase = createClientComponentClient();
     const currentUser = useContext(CurrentUserContext);
 
- console.log(currentUser)
-    console.log('here')
     useEffect(() => {
         setIsLoading(true)
-        getCustomerData(setData, setIsLoading, setCustomColumns, setIsRefreshTrigger)
-
-    }, [supabase, isRefreshTrigger])
+        getCustomerData(setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters)
+        console.log(filters)
+    }, [supabase, isRefreshTrigger, filters])
     const newColumns = [...columns, ...customColumns]
 
     return (
         <div>
             <Spinner isLoading={isLoading} />
-            <DataTable setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
+            <DataTable filters={filters} setFilters={setFilters} setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
         </div>
       )
     }

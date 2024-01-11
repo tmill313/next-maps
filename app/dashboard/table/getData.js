@@ -1,47 +1,9 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import getCustomFieldInput from "./components/CustomFieldInput";
 import axios from "axios";
+import getCustomFieldInput from "./components/CustomFieldInput";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const getPartnerData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters) => {
+const getData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, salesforceRoute, salesforceAuth, profileData, pickList) => {
     const supabase = createClientComponentClient();
-
-    console.log('here')
-
-          const { loading: userLoading, data } = await supabase.auth.getUser()
-          let user = data?.user
-    
-          const { data: profileData } = await supabase
-          .from("profiles")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
-
-          const { data: salesforceData } = await supabase
-          .from("salesforce_auth")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
-    
-          let salesforceAuth = salesforceData
-          let PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts)+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
-
-          if(filters.color) {
-            const { data: colorRows } = await supabase
-            .from("row_colors")
-            .select(`account_id`)
-            .eq("color_hex", filters?.color)
-            console.log(colorRows)
-            if(colorRows) {
-              let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
-              console.log(accountString)
-              let stringAddition = `+AND+Id+IN(${accountString})`
-              PARTNER_URL = `${PARTNER_URL}${stringAddition}`
-
-            }
-          }
-          if(filters.industry) {
-            PARTNER_URL = `${PARTNER_URL}+AND+Industry='${filters.industry}'`
-          }
 
           const options = {
               headers: {
@@ -52,18 +14,16 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
               },
             };
 
+        const CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,BillingAddress,Industry,NumberOfEmployees,AnnualRevenue,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
   
         let records
-        let pickList
           try {
-              const res = await axios.get(PARTNER_URL, options);
-              console.log(res.data)
+              const res = await axios.get(salesforceRoute, options);
               records = res?.data?.records
 
           } catch (error) {
               console.log(error)
           }
-
           let tempHeaders = []
           let tempFields = {}
           try {
@@ -89,7 +49,6 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
           } catch (error) {
               console.log(error)
           }
-
           const colorInfo = {}
           try {
             const { data: colorData } = await supabase
@@ -108,36 +67,42 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
           } catch (error) {
               console.log(error)
           }
-
-
+          
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
-           let tempObj = {
+            console.log(colorInfo)
+            let tempObj = {
                 Name: item.Name,
                 id: item.Id,
                 amount: 100,
                 status: 'pending', 
                 salesforceAuth,
-                ContactName: {
-                  firstName: contact?.FirstName,
-                  lastName: contact?.LastName
-                },
+                BillingAddress: item?.BillingAddress,
+                pickList: pickList,
+                Industry: item?.Industry,
+                NumberOfEmployees: item?.NumberOfEmployees,
+                AnnualRevenue: item?.AnnualRevenue,
                 MobilePhone: contact?.MobilePhone,
                 ContactTitle: contact?.Title,
                 ContactEmail: contact?.Email,
                 ContactId: contact?.Id,
+                ContactName: {
+                  firstName: contact?.FirstName,
+                  lastName: contact?.LastName
+                },
                 Owner: item?.Owner,
                 rowColor: colorInfo[item?.Id]
             }
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
             })
+            console.log(tempObj)
             return tempObj
         })
-        console.log(newData)
+
 await setData(newData)
 setIsLoading(false)
 
 }
 
-export default getPartnerData
+export default getData

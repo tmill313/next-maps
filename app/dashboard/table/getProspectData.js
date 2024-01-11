@@ -3,7 +3,7 @@ import axios from "axios";
 import getCustomFieldInput from "./components/CustomFieldInput";
 
 
-const getProspectData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger) => {
+const getProspectData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters) => {
     const supabase = createClientComponentClient();
 
 
@@ -21,8 +21,28 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
           .select(`*`)
           .eq("id", user?.id)
           .single();
-    
+          
           let salesforceAuth = salesforceData
+          
+          let PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Industry,BillingAddress,NumberOfEmployees,AnnualRevenue,LastActivityDate,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+
+          if(filters.color) {
+            const { data: colorRows } = await supabase
+            .from("row_colors")
+            .select(`account_id`)
+            .eq("color_hex", filters?.color)
+            console.log(colorRows)
+            if(colorRows) {
+              let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
+              console.log(accountString)
+              let stringAddition = `+AND+Id+IN(${accountString})`
+              PROSPECT_URL = `${PROSPECT_URL}${stringAddition}`
+
+            }
+          }
+          if(filters.industry) {
+            PROSPECT_URL = `${PROSPECT_URL}+AND+Industry='${filters.industry}'`
+          }
 
           const options = {
               headers: {
@@ -33,7 +53,6 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
               },
             };
 
-        const PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Industry,BillingAddress,NumberOfEmployees,AnnualRevenue,LastActivityDate,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
   
         let records
         let pickList

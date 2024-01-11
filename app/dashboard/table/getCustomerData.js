@@ -4,7 +4,7 @@ import { custom } from "zod";
 import getCustomFieldInput from "./components/CustomFieldInput";
 import CustomFieldInput from "./components/CustomFieldInput";
 
-const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger) => {
+const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters) => {
     const supabase = createClientComponentClient();
 
           const { loading: userLoading, data } = await supabase.auth.getUser()
@@ -24,6 +24,26 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
     
           let salesforceAuth = salesforceData
 
+          let CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,BillingAddress,Industry,NumberOfEmployees,AnnualRevenue,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceData?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+          if(filters.color) {
+            const { data: colorRows } = await supabase
+            .from("row_colors")
+            .select(`account_id`)
+            .eq("color_hex", filters?.color)
+            console.log(colorRows)
+            if(colorRows) {
+              let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
+              console.log(accountString)
+              let stringAddition = `+AND+Id+IN(${accountString})`
+              CUSTOMER_URL = `${CUSTOMER_URL}${stringAddition}`
+              console.log(CUSTOMER_URL)
+
+            }
+          }
+          if(filters.industry) {
+            CUSTOMER_URL = `${CUSTOMER_URL}+AND+Industry='${filters.industry}'`
+          }
+
           const options = {
               headers: {
                 Authorization: `Bearer ${salesforceAuth?.access_token}`,
@@ -33,7 +53,6 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
               },
             };
 
-        const CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,BillingAddress,Industry,NumberOfEmployees,AnnualRevenue,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceData?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
   
         let records
         let pickList
@@ -80,7 +99,6 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
             .select(`*`)
             .eq("profile_id", profileData?.id)
             const newColumns = colorData?.map(color => {
-              console.log(color)
                 colorInfo[`${color?.account_id}`] = {
                   rowColor: color?.color_hex,
                   accountId: color?.account_id
@@ -94,7 +112,6 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
           
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
-            console.log(colorInfo)
             let tempObj = {
                 Name: item.Name,
                 id: item.Id,
@@ -120,7 +137,6 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
             })
-            console.log(tempObj)
             return tempObj
         })
 

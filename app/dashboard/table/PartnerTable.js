@@ -9,7 +9,7 @@ import Spinner from '@/components/Spinner';
 
 
 
-const PartnerTable = ({isOpen, setIsOpen}) => {
+const PartnerTable = ({isOpen, setIsOpen, filters, setFilters}) => {
 
     const [data, setData] = useState([])
     const [customColumns, setCustomColumns] = useState([])
@@ -19,16 +19,16 @@ const PartnerTable = ({isOpen, setIsOpen}) => {
  
     useEffect(() => {
         setIsLoading(true)
-        getPartnerData(setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger)
+        getPartnerData(setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters)
 
-    }, [supabase, isRefreshTrigger])
+    }, [supabase, isRefreshTrigger, filters])
     const newColumns = [...columns, ...customColumns]
 
 
     return (
     <div>
         <Spinner isLoading={isLoading} />
-        <DataTable setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
+        <DataTable setFilters={setFilters} filters={filters} setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
     </div>
       )
     }

@@ -11,6 +11,7 @@ import {
   VisibilityState,
   useReactTable,
 } from "@tanstack/react-table"
+import { Badge } from "@/components/ui/badge"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -32,6 +33,15 @@ import CustomFieldPopover from "./CustomFieldPopover"
 import CurrentUserContext from "@/app/contexts/CurrentUserContext"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Spinner from "@/components/Spinner"
+import { CrossCircledIcon } from "@radix-ui/react-icons"
+
+
+const colorArray = [
+  {label: 'Green', value: 'green', hex: '#A5D39C'},
+  {label: 'Blue', value: 'blue', hex: '#B0D1E8'},
+  {label: 'Red', value: 'red', hex: '#FF6C5C'},
+  {label: 'Yellow', value: 'yellow', hex: '#FFE699'},
+  {label: 'Grey', value: 'grey', hex: '#D09FB8'},]
 
 
 export function DataTable({
@@ -39,7 +49,9 @@ export function DataTable({
   data,
   isOpen,
   setIsOpen,
-  setIsRefreshTrigger
+  setIsRefreshTrigger,
+  filters,
+  setFilters
 }) {
   const supabase = createClientComponentClient();
     const [sorting, setSorting] = useState([])
@@ -141,6 +153,7 @@ export function DataTable({
     <div>
     <Spinner isLoading={isLoading} />
         <div className="flex justify-between items-center py-4">
+          <div>
           <div className="flex justify-between items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -189,6 +202,20 @@ export function DataTable({
             }
             className="max-w-sm"
             />
+              </div>
+            <div>
+            {filters && Object?.keys(filters).map((filter, i) => {
+              if(filters[filter]) {
+            return (<Badge className='px-1' key={`${filter}-${i}`} variant="secondary">{`${filter} = ${filters[filter]}`}
+                 <CrossCircledIcon
+                 onClick={() => {
+                  return setFilters((prevState) => ({...prevState, [filter]: undefined}))}}
+                 className="ml-2 h-4 w-4"
+                 />
+            </Badge>)
+              }
+            })}
+            </div>
             </div>
             <div>
 

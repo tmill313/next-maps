@@ -1,5 +1,5 @@
 'use client'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CustomerTable from './CustomerTable';
 import PartnerTable from './PartnerTable';
@@ -10,6 +10,11 @@ import FilterDrawer from './filterDrawer/FilterDrawer';
 
 const DemoPage = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [filters, setFilters] = useState({})
+  const [reloadTrigger, setReloadTrigger] = useState(false)
+useEffect(() => {
+  console.log(filters)
+}, [filters])
 
 
   return (
@@ -20,11 +25,11 @@ const DemoPage = () => {
     <TabsTrigger value="customer">Customers</TabsTrigger>
     <TabsTrigger value="partners">Partners</TabsTrigger>
   </TabsList>
-  <TabsContent value="prospect"><ProspectTable isOpen={isOpen} setIsOpen={setIsOpen} /></TabsContent>
-  <TabsContent value="customer"><CustomerTable isOpen={isOpen} setIsOpen={setIsOpen} /></TabsContent>
-  <TabsContent value="partners"><PartnerTable  isOpen={isOpen} setIsOpen={setIsOpen} /></TabsContent>
+  <TabsContent value="prospect"><ProspectTable filters={filters} setFilters={setFilters} isOpen={isOpen} setIsOpen={setIsOpen} /></TabsContent>
+  <TabsContent value="customer"><CustomerTable filters={filters} setFilters={setFilters} isOpen={isOpen} setIsOpen={setIsOpen} /></TabsContent>
+  <TabsContent value="partners"><PartnerTable filters={filters} setFilters={setFilters}  isOpen={isOpen} setIsOpen={setIsOpen} /></TabsContent>
 </Tabs>
-      <FilterDrawer isOpen={isOpen} setIsOpen={setIsOpen} />
+      <FilterDrawer setReloadTrigger={setReloadTrigger} filters={filters} setFilters={setFilters} isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>
   )
 }

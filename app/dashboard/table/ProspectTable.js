@@ -10,7 +10,7 @@ import Spinner from '@/components/Spinner';
 
 
 
-const ProspectTable = ({isOpen, setIsOpen}) => {
+const ProspectTable = ({isOpen, setIsOpen, filters, setFilters}) => {
 
     const [data, setData] = useState([])
     const [customColumns, setCustomColumns] = useState([])
@@ -22,16 +22,16 @@ const ProspectTable = ({isOpen, setIsOpen}) => {
     console.log('here')
     useEffect(() => {
         setIsLoading(true)
-        getProspectData(setData, setIsLoading,  customColumns, setCustomColumns, setIsRefreshTrigger)
+        getProspectData(setData, setIsLoading,  customColumns, setCustomColumns, setIsRefreshTrigger, filters)
 
-    }, [supabase, isRefreshTrigger])
+    }, [supabase, isRefreshTrigger, filters])
     const newColumns = [...columns, ...customColumns]
 
 
     return (
         <div>
             <Spinner isLoading={isLoading} />
-            <DataTable setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
+            <DataTable setFilters={setFilters} filters={filters} setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
         </div>
       )
     }

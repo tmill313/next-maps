@@ -16,8 +16,6 @@ const getCustomFieldInput = (fieldValue, columnId, setIsRefreshTrigger) => (
             accessorKey: fieldValue,
             size: 170,
             header: ({ column }) => {
-
-                console.log(column)
               return (
                 <DeleteColumnModal header={fieldValue} columnId={columnId} setIsRefreshTrigger={setIsRefreshTrigger} />
 
