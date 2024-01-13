@@ -17,6 +17,7 @@ import {
   import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import apiClient from "@/libs/api";
+import Link from "next/link";
   
   export function ProfileDrowdown() {
     const supabase = createClientComponentClient();
@@ -83,10 +84,12 @@ import apiClient from "@/libs/api";
               Billing
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
+            <Link href="/dashboard/settings">
             <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
