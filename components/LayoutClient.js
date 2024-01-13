@@ -73,6 +73,7 @@ const ClientLayout = ({ children }) => {
   const supabase = createClientComponentClient();
   const [data, setData] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [fields, setFields] = useState(null)
   const [salesforceAuth, setSalesforceAuth] = useState(null);
   const [industryPicklist, setIndustryPicklist] = useState([])
 
@@ -95,6 +96,12 @@ const ClientLayout = ({ children }) => {
       .select(`*`)
       .eq("id", user?.id)
       .single();
+
+      const { data: fieldData } = await supabase
+      .from("salesforce_fields")
+      .select(`*`)
+      .eq("profile_id", profileData?.id)
+
       const options = {
         headers: {
           Authorization: `Bearer ${salesforceData?.access_token}`,
@@ -117,6 +124,7 @@ const ClientLayout = ({ children }) => {
         setData(session?.user);
         setProfile(profileData);
         setSalesforceAuth(salesforceData);
+        setFields(fieldData)
     };
     getUser();
   }, []);
@@ -131,7 +139,8 @@ const ClientLayout = ({ children }) => {
         profile,
         data,
         salesforceAuth,
-        industryPicklist
+        industryPicklist,
+        fields
       }}
       >
       {children}

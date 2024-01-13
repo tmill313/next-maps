@@ -276,7 +276,6 @@ export function DataTable({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
-              console.log(row)
               let savedColor = row?.original?.rowColor?.rowColor
               let color = (savedColor && !getColor(row?.original?.id)) ? savedColor : getColor(row?.original?.id)
               return (

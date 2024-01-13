@@ -80,16 +80,12 @@ if(isLoading) return
         />
         </div>
         :
-        !salesforceAuth?.access_token ? 
+        !salesforceAuth?.access_token &&
           <div>
           <Link href={salesforceLoginURL}>
             <ButtonGradient title='Connect Salesforce'/>
           </Link>
         </div>
-      :
-      <div>
-        <GoogleMap points={points} setPoints={setPoints} salesforceAuth={salesforceAuth}/>
-      </div>
         }
       </section>
     </main>

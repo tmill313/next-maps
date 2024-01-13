@@ -5,27 +5,17 @@ import { custom } from "zod";
 import getCustomFieldInput from "./components/CustomFieldInput";
 import CustomFieldInput from "./components/CustomFieldInput";
 
-const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters) => {
+const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters, currentUser) => {
     const supabase = createClientComponentClient();
 
-          const { loading: userLoading, data } = await supabase.auth.getUser()
-          let user = data?.user
-
-          const { data: profileData } = await supabase
-          .from("profiles")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
+          let profileData = currentUser?.profile
+          let salesforceAuth = currentUser?.salesforceAuth
+          const fields = currentUser?.fields?.filter(field => field.is_active === true)?.map(item => item.name)
+          let fieldString = fields?.join(',') ?? ''
+          console.log(fieldString)
     
-          const { data: salesforceData } = await supabase
-          .from("salesforce_auth")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
-    
-          let salesforceAuth = salesforceData
 
-          let CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,BillingAddress,Industry,NumberOfEmployees,AnnualRevenue,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceData?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+          let CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,${fieldString},(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
           if(filters.color) {
             const { data: colorRows } = await supabase
             .from("row_colors")
@@ -58,12 +48,9 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
         let records
         let pickList
           try {
-            const industryUrl = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/describe`
               const res = await axios.get(CUSTOMER_URL, options);
               console.log(res)
-              let industryRes = await axios.get(industryUrl, options);
-              let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
-              pickList = industryPick
+              pickList = currentUser?.industryPicklist
               records = res?.data?.records
 
           } catch (error) {
@@ -116,17 +103,7 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
             let tempObj = {
-                Name: item.Name,
                 id: item.Id,
-                amount: 100,
-                status: 'pending', 
-                salesforceAuth,
-                BillingAddress: item?.BillingAddress,
-                pickList: pickList,
-                Industry: item?.Industry,
-                NumberOfEmployees: item?.NumberOfEmployees,
-                AnnualRevenue: item?.AnnualRevenue,
-                MobilePhone: contact?.MobilePhone,
                 ContactTitle: contact?.Title,
                 ContactEmail: contact?.Email,
                 ContactId: contact?.Id,
@@ -140,9 +117,14 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
             })
+            fields?.map(field => {
+              console.log(field)
+              console.log(item)
+              tempObj[field] = item[field]
+            })
             return tempObj
         })
-
+console.log(newData)
 await setData(newData)
 setIsLoading(false)
 

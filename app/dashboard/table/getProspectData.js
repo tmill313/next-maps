@@ -61,7 +61,6 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
           try {
             const industryUrl = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/describe`
               const res = await axios.get(PROSPECT_URL, options);
-              console.log(res.data)
               let industryRes = await axios.get(industryUrl, options);
               let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
               pickList = industryPick
@@ -105,7 +104,6 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
             .select(`*`)
             .eq("profile_id", profileData?.id)
             const newColumns = colorData?.map(color => {
-              console.log(color)
                 colorInfo[`${color?.account_id}`] = {
                   rowColor: color?.color_hex,
                   accountId: color?.account_id
@@ -149,7 +147,6 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
             })
             return tempObj
         })
-        console.log(newData)
 await setData(newData)
 setIsLoading(false)
 

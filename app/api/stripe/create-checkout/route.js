@@ -60,8 +60,8 @@ export async function POST(req) {
     if (!data) {
       await supabase.from("profiles").insert([
         {
-          id: session.user.id,
-          price_id: body.priceId,
+          id: session?.user?.id,
+          price_id: body?.priceId,
           email: session?.user?.email,
         },
       ]);

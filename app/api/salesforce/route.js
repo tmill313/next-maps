@@ -39,7 +39,7 @@ export async function GET(req) {
     if (!data) {
         await supabase.from("salesforce_auth").insert([
           {
-            id: session.user.id,
+            id: session?.user.id,
             auth_code: code
           },
         ]);
