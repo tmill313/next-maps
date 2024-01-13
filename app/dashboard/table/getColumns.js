@@ -30,8 +30,7 @@ import GenericPicklist from "./components/GenericPicklist"
 const getColumns = (currentUser, fields) => {
 
     const columns = fields?.filter(field => field.is_active === true)?.map(field => {
-      return (
-        {
+        return {
           accessorKey: field.name,
           size: 170,
           header: ({ column }) => {
@@ -103,13 +102,13 @@ const getColumns = (currentUser, fields) => {
                 }
           }
           if(field?.type === 'picklist') {
-            return <GenericPicklist onSubmit={onSubmit} currentField={field} value={value} form={form}/>
+            return (<GenericPicklist onSubmit={onSubmit} currentField={field} value={value} form={form}/>)
           } else {
             return <GenericInput onSubmit={onSubmit} currentField={field} value={value} form={form}/>
-    }
           }
-        },
-      )
+          }
+        }
+    
     })
 
     console.log(columns)
