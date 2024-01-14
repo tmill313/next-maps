@@ -52,9 +52,6 @@ export default function Dashboard() {
 
 console.log(profile)
   
-
-
-  const salesforceLoginURL = `https://login.salesforce.com/services/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_SALESFORCE_CONSUMER_KEY}&redirect_uri=${config.baseURL}/api/salesforce&response_type=code`
   
 if(isLoading) return
 
@@ -65,21 +62,14 @@ if(isLoading) return
         <h1 className="text-xl md:text-2xl font-bold">It looks like you are all caught up! 🥳</h1>
 
 
+      {!profile && <div>
+        <h1 className="text-3xl md:text-4xl font-extrabold">
+          Subscribe to get access:
         <ButtonCheckout
           mode="subscription"
           priceId={config.stripe.plans[0].priceId}
         />
-      {!profile ? <div>
-        <h1 className="text-3xl md:text-4xl font-extrabold">
-          Subscribe to get access:
         </h1>
-        </div>
-        :
-        !salesforceAuth?.access_token &&
-          <div>
-          <Link href={salesforceLoginURL}>
-            <ButtonGradient title='Connect Salesforce'/>
-          </Link>
         </div>
         }
       </section>
