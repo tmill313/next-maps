@@ -1,7 +1,6 @@
 "use client"
 import {useState, useEffect, useContext} from 'react'
 import { Button } from "@/components/ui/button"
-import CurrentUserContext from '@/app/contexts/CurrentUserContext';
 import axios from 'axios'
 import FieldSettingsForm from './FieldSettingsForm'
 import { Input } from '@/components/ui/input'
@@ -49,15 +48,14 @@ const getInputs = (array, companyId) => {
 
 
 
-const FieldSettings = () => {
-    const [fields, setFields] = useState([])
+const FieldSettings = ({currentUser}) => {
     const [isLoading, setIsLoading] = useState(false)
     const [filter, setFilter] = useState('')
-    const currentUser = useContext(CurrentUserContext);
     const salesforceAuth = currentUser?.salesforceAuth
     const profile = currentUser?.profile
     const supabase = createClientComponentClient()
     console.log(currentUser)
+    const [fields, setFields] = useState(currentUser.fields)
 
     
     const options = {
@@ -80,15 +78,15 @@ const FieldSettings = () => {
     useEffect(() => {
         setIsLoading(true)
         if(!currentUser.salesforceAuth) return
-        if(currentUser?.fields.length > 0) {
+        if(currentUser.fields.length > 0) {
             setFields(currentUser?.fields)
         } else {
+            console.log('getfields')
         getFields()
         }
         setIsLoading(false)
-    }, [currentUser])
+    }, [currentUser.fields])
     
-    console.log(fields)
     const formVals = getInputs(fields, profile?.company_id)
 
     const syncFields = async () => {

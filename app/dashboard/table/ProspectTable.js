@@ -29,10 +29,10 @@ const ProspectTable = ({isOpen, setIsOpen, filters, setFilters}) => {
         setColumns(newColumns)
         getProspectData(setData, setIsLoading,  customColumns, setCustomColumns, setIsRefreshTrigger, filters, currentUser)
 
-    }, [supabase, isRefreshTrigger, filters])
+    }, [supabase, isRefreshTrigger, filters, currentUser.fields])
     const newColumns = [...columns, ...customColumns]
 
-
+console.log(currentUser)
     return (
         <div>
             <Spinner isLoading={isLoading} />

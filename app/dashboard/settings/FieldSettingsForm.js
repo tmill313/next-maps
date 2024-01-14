@@ -60,7 +60,7 @@ const FieldSettingsForm = ({fields, initialValues, validationSchema, profile}) =
           ),
         })
       }
-
+if(!fields) return null
     return (
         <div>
         <Form {...form}>

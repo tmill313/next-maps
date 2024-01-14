@@ -84,7 +84,7 @@ import Link from "next/link";
               Billing
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <Link href="/dashboard/settings">
+            <Link  href="/dashboard/settings">
             <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
