@@ -14,7 +14,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 
 
-const getInputs = (array, profileId) => {
+const getInputs = (array, companyId) => {
 
     let dbValues = []
 
@@ -29,7 +29,7 @@ const getInputs = (array, profileId) => {
         validationsFields[field.name] = z.boolean()
 
         dbValues.push({
-            profile_id: profileId,
+            company_id: companyId,
             is_active: false,
             type: field.type,
             name: field.name,
@@ -89,7 +89,7 @@ const FieldSettings = () => {
     }, [currentUser])
     
     console.log(fields)
-    const formVals = getInputs(fields, profile?.id)
+    const formVals = getInputs(fields, profile?.company_id)
 
     const syncFields = async () => {
         setIsLoading(true)
@@ -98,7 +98,7 @@ const FieldSettings = () => {
         const { data: fieldData, error: supabaseError } = await supabase
         .from('salesforce_fields')
         .select('name')
-        .eq('profile_id', profile?.id)
+        .eq('company_id', profile?.company_id)
         console.log(fieldData)
         if(fieldData?.length < 1) {
             const { data, error } = await supabase
@@ -130,7 +130,7 @@ const FieldSettings = () => {
         </div>
     <FieldSettingsForm 
     {...formVals}
-    profileId={profile?.id}
+    profile={profile}
     fields={fields.filter(d => filter === '' || d.label.toLowerCase().includes(filter.toLowerCase()))}
     />
     </div>

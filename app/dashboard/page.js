@@ -50,7 +50,7 @@ export default function Dashboard() {
     getUser();
   }, [supabase]);
 
-
+console.log(profile)
   
 
 
@@ -64,15 +64,15 @@ if(isLoading) return
         <h1 className="text-3xl md:text-4xl font-extrabold">👋 Hey {user?.user_metadata?.name.split(' ')[0]}!</h1>
         <h1 className="text-xl md:text-2xl font-bold">It looks like you are all caught up! 🥳</h1>
 
-      {!profile?.has_access ? <div>
-        <h1 className="text-3xl md:text-4xl font-extrabold">
-          Subscribe to get access:
-        </h1>
 
         <ButtonCheckout
           mode="subscription"
           priceId={config.stripe.plans[0].priceId}
         />
+      {!profile ? <div>
+        <h1 className="text-3xl md:text-4xl font-extrabold">
+          Subscribe to get access:
+        </h1>
         </div>
         :
         !salesforceAuth?.access_token &&

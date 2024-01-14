@@ -63,6 +63,7 @@ export async function POST(req) {
           id: session?.user?.id,
           price_id: body?.priceId,
           email: session?.user?.email,
+          company_id: 1
         },
       ]);
     }

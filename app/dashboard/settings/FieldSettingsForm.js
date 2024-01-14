@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge"
 
 
 
-const FieldSettingsForm = ({fields, initialValues, validationSchema, profileId}) => {
+const FieldSettingsForm = ({fields, initialValues, validationSchema, profile}) => {
     const supabase = createClientComponentClient()
 
 
@@ -47,7 +47,7 @@ const FieldSettingsForm = ({fields, initialValues, validationSchema, profileId})
             .update({
               is_active: body[key]
             })
-            .eq("profile_id", profileId)
+            .eq("company_id", profile?.company_id)
             .eq("name", key)
             console.log(error)
         }

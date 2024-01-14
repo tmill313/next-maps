@@ -13,6 +13,7 @@ export async function GET(req) {
   if (code) {
     const supabase = createRouteHandlerClient({ cookies });
     await supabase.auth.exchangeCodeForSession(code);
+    
   }
 
   // URL to redirect to after sign in process completes

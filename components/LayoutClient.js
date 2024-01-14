@@ -74,6 +74,7 @@ const ClientLayout = ({ children }) => {
   const [data, setData] = useState(null);
   const [profile, setProfile] = useState(null);
   const [fields, setFields] = useState(null)
+  const [company, setCompany] = useState(null)
   const [salesforceAuth, setSalesforceAuth] = useState(null);
   const [industryPicklist, setIndustryPicklist] = useState([])
 
@@ -97,10 +98,16 @@ const ClientLayout = ({ children }) => {
       .eq("id", user?.id)
       .single();
 
+
       const { data: fieldData } = await supabase
       .from("salesforce_fields")
       .select(`*`)
-      .eq("profile_id", profileData?.id)
+      .eq("company_id", profileData?.company_id)
+
+      const { data: companyData } = await supabase
+      .from("companies")
+      .select(`*`)
+      .eq("id", profileData?.company_id)
 
       const options = {
         headers: {
@@ -125,6 +132,7 @@ const ClientLayout = ({ children }) => {
         setProfile(profileData);
         setSalesforceAuth(salesforceData);
         setFields(fieldData)
+        setCompany(companyData)
     };
     getUser();
   }, []);
@@ -140,7 +148,8 @@ const ClientLayout = ({ children }) => {
         data,
         salesforceAuth,
         industryPicklist,
-        fields
+        fields,
+        company
       }}
       >
       {children}
