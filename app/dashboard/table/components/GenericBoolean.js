@@ -15,9 +15,8 @@ import {
     PopoverTrigger,
   } from "@/components/ui/popover"
   import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-
-const GenericInput = ({form, onSubmit, value, currentField}) => {
+import { Switch } from "@/components/ui/switch"
+const GenericBoolean = ({form, onSubmit, value, currentField}) => {
     const [currentValue, setCurrentValue] = useState(value)
     const [isOpen, setIsOpen] = useState(false)
     let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
@@ -25,26 +24,24 @@ const GenericInput = ({form, onSubmit, value, currentField}) => {
 return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
     <PopoverTrigger asChild>
-      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{currentValue ?? '-'}</span>
+      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{typeof currentValue !== 'undefined' ? `${currentValue}` : '-'}</span>
   
     </PopoverTrigger>
     <PopoverContent>
     <Form {...form}>
-                  <form onSubmit={form.handleSubmit((data) => onSubmit(data, setCurrentValue, setIsOpen))} className="w-3/3 h-30 space-y-6">
+                  <form onSubmit={form.handleSubmit((data) => onSubmit(data, setCurrentValue, setIsOpen))} className="w-3/3 h-22 space-y-6">
                     <FormField
                       control={form.control}
                       name={currentField?.name}
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className='flex justify-between items-center'>
                           <FormLabel>{currentField?.label}</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder={currentField?.label}
-                              className="resize-none h-56"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
                         </FormItem>
                       )}
                     />
@@ -60,4 +57,4 @@ return (
 )
 }
 
-export default GenericInput
+export default GenericBoolean

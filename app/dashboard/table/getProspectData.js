@@ -5,28 +5,20 @@ import axios from "axios";
 import getCustomFieldInput from "./components/CustomFieldInput";
 
 
-const getProspectData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters) => {
+const getProspectData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters, currentUser) => {
     const supabase = createClientComponentClient();
 
-
-          const { loading: userLoading, data } = await supabase.auth.getUser()
-          let user = data?.user
-
-          const { data: profileData } = await supabase
-          .from("profiles")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
-    
-          const { data: salesforceData } = await supabase
-          .from("salesforce_auth")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
+    let profileData = currentUser?.profile
+    let salesforceAuth = currentUser?.salesforceAuth
+    const fields = currentUser?.fields?.filter(field => field.is_active === true)?.map(item => item.name)
+    let fieldString = fields?.join(',') ?? ''
+    let idString = `Id`
+    let joinedString = `${idString},${fieldString},`
+    if(fields.length < 1) {
+      joinedString = `${idString},`
+    }
           
-          let salesforceAuth = salesforceData
-          
-          let PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Industry,BillingAddress,NumberOfEmployees,AnnualRevenue,LastActivityDate,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+          let PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+${joinedString}(Select+Id,MobilePhone,FirstName,LastName,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
 
           if(filters.color) {
             const { data: colorRows } = await supabase
@@ -57,13 +49,9 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
 
   
         let records
-        let pickList
+        let pickList = currentUser?.industryPicklist
           try {
-            const industryUrl = `${salesforceAuth?.instance_url}/services/data/v59.0/sobjects/Account/describe`
               const res = await axios.get(PROSPECT_URL, options);
-              let industryRes = await axios.get(industryUrl, options);
-              let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)
-              pickList = industryPick
               records = res?.data?.records
 
           } catch (error) {
@@ -119,18 +107,9 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
             let tempObj = {
-                Name: item.Name,
                 id: item.Id,
-                amount: 100,
-                status: 'pending', 
                 salesforceAuth,
-                BillingAddress: item?.BillingAddress,
                 pickList: pickList,
-                Industry: item?.Industry,
-                NumberOfEmployees: item?.NumberOfEmployees,
-                AnnualRevenue: item?.AnnualRevenue,
-                LastActivityDate: item?.LastActivityDate,
-                Notes: item?.Notes,
                 ContactName: {
                   firstName: contact?.FirstName,
                   lastName: contact?.LastName
@@ -144,6 +123,9 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
             }
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
+            })
+            fields?.map(field => {
+              tempObj[field] = item[field]
             })
             return tempObj
         })

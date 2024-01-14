@@ -31,7 +31,9 @@ const getInputs = (array, profileId) => {
             type: field.type,
             name: field.name,
             label: field.label,
-            picklist_values: field.picklistValues
+            picklist_values: field.picklistValues,
+            custom: field.custom,
+            updateable: field.updateable
         })
     }
     )

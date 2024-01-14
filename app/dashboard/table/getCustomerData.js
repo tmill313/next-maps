@@ -1,9 +1,7 @@
 import checkError from "@/app/utils/checkError";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import axios from "axios";
-import { custom } from "zod";
 import getCustomFieldInput from "./components/CustomFieldInput";
-import CustomFieldInput from "./components/CustomFieldInput";
 
 const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters, currentUser) => {
     const supabase = createClientComponentClient();
@@ -12,10 +10,14 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
           let salesforceAuth = currentUser?.salesforceAuth
           const fields = currentUser?.fields?.filter(field => field.is_active === true)?.map(item => item.name)
           let fieldString = fields?.join(',') ?? ''
-          console.log(fieldString)
+          let idString = `Id`
+          let joinedString = `${idString},${fieldString},`
+          if(fields.length < 1) {
+            joinedString = `${idString},`
+          }
     
 
-          let CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,${fieldString},(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
+          let CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+${joinedString}(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
           if(filters.color) {
             const { data: colorRows } = await supabase
             .from("row_colors")
@@ -46,11 +48,10 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
 
   
         let records
-        let pickList
+        let pickList = currentUser?.industryPicklist
           try {
               const res = await axios.get(CUSTOMER_URL, options);
               console.log(res)
-              pickList = currentUser?.industryPicklist
               records = res?.data?.records
 
           } catch (error) {
@@ -118,8 +119,6 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
             })
             fields?.map(field => {
-              console.log(field)
-              console.log(item)
               tempObj[field] = item[field]
             })
             return tempObj

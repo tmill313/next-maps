@@ -3,28 +3,19 @@ import getCustomFieldInput from "./components/CustomFieldInput";
 import axios from "axios";
 import checkError from "@/app/utils/checkError";
 
-const getPartnerData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters) => {
+const getPartnerData = async (setData, setIsLoading, customColumns, setCustomColumns, setIsRefreshTrigger, filters, currentUser) => {
     const supabase = createClientComponentClient();
 
-    console.log('here')
-
-          const { loading: userLoading, data } = await supabase.auth.getUser()
-          let user = data?.user
-    
-          const { data: profileData } = await supabase
-          .from("profiles")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
-
-          const { data: salesforceData } = await supabase
-          .from("salesforce_auth")
-          .select(`*`)
-          .eq("id", user?.id)
-          .single();
-    
-          let salesforceAuth = salesforceData
-          let PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+Id,Name,Owner.Name,Owner.Id,(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts)+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
+    let profileData = currentUser?.profile
+    let salesforceAuth = currentUser?.salesforceAuth
+    const fields = currentUser?.fields?.filter(field => field.is_active === true)?.map(item => item.name)
+    let fieldString = fields?.join(',') ?? ''
+    let idString = `Id`
+    let joinedString = `${idString},${fieldString},`
+    if(fields.length < 1) {
+      joinedString = `${idString},`
+    }
+          let PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+${joinedString}(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts)+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
 
           if(filters.color) {
             const { data: colorRows } = await supabase
@@ -55,7 +46,7 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
 
   
         let records
-        let pickList
+        let pickList = currentUser?.industryPicklist
           try {
               const res = await axios.get(PARTNER_URL, options);
               console.log(res.data)
@@ -115,10 +106,7 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
           const newData = records?.map(item => {
             const contact = item?.Contacts.records[0]
            let tempObj = {
-                Name: item.Name,
                 id: item.Id,
-                amount: 100,
-                status: 'pending', 
                 salesforceAuth,
                 ContactName: {
                   firstName: contact?.FirstName,
@@ -133,6 +121,9 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
             }
             tempHeaders.map(header => {
               tempObj[header] = tempFields[`${item?.Id}-${header}`]?.fieldValue
+            })
+            fields?.map(field => {
+              tempObj[field] = item[field]
             })
             return tempObj
         })

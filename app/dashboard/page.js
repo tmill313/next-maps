@@ -59,16 +59,11 @@ export default function Dashboard() {
 if(isLoading) return
 
   return (
-    <CurrentUserContext.Provider
-    value={{
-      profile,
-      user,
-      salesforceAuth
-    }}
-  >
     <main className="min-h-screen p-8 pb-24">
       <section className="max-w-xl mx-auto space-y-8">
-        <ButtonAccount />
+        <h1 className="text-3xl md:text-4xl font-extrabold">Hey {user?.user_metadata?.name.split(' ')[0]}!</h1>
+        <h1 className="text-xl md:text-2xl font-bold">It looks like you are all caught up! 🥳</h1>
+
       {!profile?.has_access ? <div>
         <h1 className="text-3xl md:text-4xl font-extrabold">
           Subscribe to get access:
@@ -89,7 +84,6 @@ if(isLoading) return
         }
       </section>
     </main>
-    </CurrentUserContext.Provider>
   );
 }
 

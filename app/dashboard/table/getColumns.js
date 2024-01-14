@@ -1,31 +1,19 @@
 'use client'
-import { MoreHorizontal, ArrowUpDown} from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import axios from 'axios'
 import { toast } from "sonner"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import PickList from '@/components/PickList'
-import NameInput from './components/NameInput'
-import AddressForm from './components/AddressForm'
-import RevenueInput from './components/RevenueInput'
-import EmployeesInput from './components/EmployeesInput'
-import ContactNameInput from './components/ContactNameInput'
-import EmailInput from './components/EmailInput'
-import PhoneInput from './components/PhoneInput'
-import { Checkbox } from "@/components/ui/checkbox"
 import checkError from "@/app/utils/checkError"
-import GenericInput from "./components/GenericInput"
+import GenericTextArea from "./components/GenericTextArea"
 import GenericPicklist from "./components/GenericPicklist"
+import GenericBoolean from "./components/GenericBoolean"
+import GenericReadonly from "./components/GenericReadonly"
+import GenericCurrencyInput from "./components/GenericCurrencyInput"
+import GenericInt from "./components/GenericInt"
+import GenericDatePicker from "./components/GenericDatePicker"
+import {formatISO} from 'date-fns'
+import { Checkbox } from "@/components/ui/checkbox"
 
 const getColumns = (currentUser, fields) => {
 
@@ -42,14 +30,80 @@ const getColumns = (currentUser, fields) => {
             const salesforceAuth = currentUser?.salesforceAuth
             const account = row?.original
               const value = row.getValue(field.name)
-              const FormSchema = z.object({
+
+              const BoolSchema = z.object({
+                [field.name]: z
+                  .boolean()
+                  .optional()
+              })
+              const StringSchema = z.object({
                   [field.name]: z
                     .string()
                     .optional()
                 })
+
+                const IntSchema = z.object({
+                  [field.name]: z
+                    .number()
+                    .int()
+                    .nonnegative()
+                    .optional()
+                })
+                const DoubleSchema = z.object({
+                    [field.name]: z
+                      .number()
+                      .nonnegative()
+                      .optional()
+                  })
+                  const PhoneSchema = z.object({
+                    [field.name]: z
+                      .number()
+                      .nonnegative()
+                      .optional()
+                  })
+                  const DateSchema = z.object({
+                    [field.name]: z
+                      .date()
+                      .optional()
+                  })
+                  const DateTimeSchema = z.object({
+                    [field.name]: z
+                      .string()
+                      .datetime()
+                      .optional()
+                  })
+                  const EmailSchema = z.object({
+                    [field.name]: z
+                      .string()
+                      .email({ message: "Invalid email address" })
+                      .optional()
+                  })
+
+                  const getSchema = () => {
+                    switch (field?.type) {
+                      case 'boolean':
+                        return BoolSchema
+                      case 'double':
+                        return DoubleSchema
+                        case 'email':
+                        return EmailSchema
+                        case 'datetime':
+                        return DateTimeSchema
+                        case 'date':
+                        return DateSchema
+                        case 'int':
+                        return IntSchema
+              
+                      default:
+                        return StringSchema
+                    }
+                  }
+
+                  let ThisSchema = getSchema()
+
                 const SetUseForm = () => {
                   const form = useForm({
-                    resolver: zodResolver(FormSchema),
+                    resolver: zodResolver(ThisSchema),
                     defaultValues: {
                       [field.name]: value
                     }
@@ -76,19 +130,15 @@ const getColumns = (currentUser, fields) => {
                   console.log(data?.[field.name])
                   const dirtyFields = form.formState?.defaultValues[field.name] !== data?.[field.name]
                       if(dirtyFields) {
+                        if(field?.type === 'date') {
+                          let current = data[field.name]
+                          data[field.name] = formatISO(current, { representation: 'date' })
+                        }
                   const newBody = JSON.stringify(data);
                   let res
                   try {
                     
                     res = await axios.patch(salesforceURL, newBody, options);
-                    console.log(res)
-                  } catch (error) {
-                    checkError(error)
-                    console.log(error)
-                  }
-                }
-              
-                  if(dirtyFields) {
                     setter(data[field.name])
                     setIsOpen(false)
                   toast("You changed the following values:",
@@ -99,17 +149,66 @@ const getColumns = (currentUser, fields) => {
                       </pre>
                     ),
                   })
+                    console.log(res)
+                  } catch (error) {
+                    checkError(error)
+                    console.log(error)
+                    toast("The following error occurred",
+                    {
+                      description: (
+                        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                          <code className="text-white">{error?.response?.data[0]?.message}</code>
+                        </pre>
+                      ),
+                    })
+                  }
                 }
+              
           }
-          if(field?.type === 'picklist') {
+          if(field?.updateable === false) {
+            return <GenericReadonly isDate={field?.type === 'date' || field?.type === 'datetime'} value={value} />
+          } else if(field?.type === 'picklist') {
             return (<GenericPicklist onSubmit={onSubmit} currentField={field} value={value} form={form}/>)
+          } else if(field?.type === 'boolean') {
+            return <GenericBoolean onSubmit={onSubmit} currentField={field} value={value} form={form}/>
+          } else if(field?.type === 'currency') {
+            return <GenericCurrencyInput onSubmit={onSubmit} currentField={field} value={value} form={form}/>
+          } else if(field?.type === 'double' || field?.type === 'int' || field.type === 'phone') {
+            return <GenericInt onSubmit={onSubmit} currentField={field} value={value} form={form}/>
+          } else if(field?.type === 'date') {
+            return <GenericDatePicker onSubmit={onSubmit} currentField={field} value={value} form={form}/>
           } else {
-            return <GenericInput onSubmit={onSubmit} currentField={field} value={value} form={form}/>
+            return <GenericTextArea onSubmit={onSubmit} currentField={field} value={value} form={form}/>  
           }
           }
         }
     
     })
+
+    // add color checkbox
+    columns.unshift(  {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },)
+
 
     console.log(columns)
     return columns

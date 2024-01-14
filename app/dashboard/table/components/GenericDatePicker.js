@@ -9,15 +9,17 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form"
+  import { Calendar } from "@/components/ui/calendar"
   import {
     Popover,
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
   import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+  import {formatISO} from 'date-fns'
 
-const GenericInput = ({form, onSubmit, value, currentField}) => {
+
+const GenericDatePicker = ({form, onSubmit, value, currentField}) => {
     const [currentValue, setCurrentValue] = useState(value)
     const [isOpen, setIsOpen] = useState(false)
     let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
@@ -25,7 +27,7 @@ const GenericInput = ({form, onSubmit, value, currentField}) => {
 return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
     <PopoverTrigger asChild>
-      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{currentValue ?? '-'}</span>
+      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{new Date(currentValue).toLocaleDateString('en-US')}</span>
   
     </PopoverTrigger>
     <PopoverContent>
@@ -34,19 +36,25 @@ return (
                     <FormField
                       control={form.control}
                       name={currentField?.name}
-                      render={({ field }) => (
+                      render={({ field }) => { 
+                        console.log(field)
+                        let formatted = new Date(field.value)
+                        console.log(formatted)
+                        return (
                         <FormItem>
                           <FormLabel>{currentField?.label}</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder={currentField?.label}
-                              className="resize-none h-56"
-                              {...field}
-                            />
+                            
+                          <Calendar
+                    mode="single"
+                    selected={formatted}
+                    onSelect={field.onChange}
+                    initialFocus
+                  />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
-                      )}
+                      )}}
                     />
                     <div className='flex justify-between'>
                       <Button onClick={() => setIsOpen(false)} variant='secondary'>Cancel</Button>
@@ -60,4 +68,4 @@ return (
 )
 }
 
-export default GenericInput
+export default GenericDatePicker

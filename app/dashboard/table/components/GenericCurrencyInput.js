@@ -15,22 +15,28 @@ import {
     PopoverTrigger,
   } from "@/components/ui/popover"
   import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
-const GenericInput = ({form, onSubmit, value, currentField}) => {
+const GenericCurrencyInput = ({form, onSubmit, value, currentField}) => {
     const [currentValue, setCurrentValue] = useState(value)
     const [isOpen, setIsOpen] = useState(false)
     let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
+    const formatted = new Intl.NumberFormat("en-US", {
+        maximumFractionDigits: 0, 
+        minimumFractionDigits: 0, 
+        style: "currency",
+        currency: "USD",
+      }).format(currentValue)
 
 return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
     <PopoverTrigger asChild>
-      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{currentValue ?? '-'}</span>
+      <span className='max-w-[170px] whitespace-nowrap text-ellipsis overflow-hidden'>{formatted ?? '-'}</span>
   
     </PopoverTrigger>
     <PopoverContent>
     <Form {...form}>
-                  <form onSubmit={form.handleSubmit((data) => onSubmit(data, setCurrentValue, setIsOpen))} className="w-3/3 h-30 space-y-6">
+                  <form onSubmit={form.handleSubmit((data) => onSubmit(data, setCurrentValue, setIsOpen))} className="w-3/3 h-80 space-y-6">
                     <FormField
                       control={form.control}
                       name={currentField?.name}
@@ -38,7 +44,7 @@ return (
                         <FormItem>
                           <FormLabel>{currentField?.label}</FormLabel>
                           <FormControl>
-                            <Input
+                            <Textarea
                               placeholder={currentField?.label}
                               className="resize-none h-56"
                               {...field}
@@ -60,4 +66,4 @@ return (
 )
 }
 
-export default GenericInput
+export default GenericCurrencyInput

@@ -17,7 +17,7 @@ import {
   import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-const GenericInput = ({form, onSubmit, value, currentField}) => {
+const GenericInt = ({form, onSubmit, value, currentField}) => {
     const [currentValue, setCurrentValue] = useState(value)
     const [isOpen, setIsOpen] = useState(false)
     let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
@@ -40,7 +40,7 @@ return (
                           <FormControl>
                             <Input
                               placeholder={currentField?.label}
-                              className="resize-none h-56"
+                              className="resize-none h-10"
                               {...field}
                             />
                           </FormControl>
@@ -60,4 +60,4 @@ return (
 )
 }
 
-export default GenericInput
+export default GenericInt

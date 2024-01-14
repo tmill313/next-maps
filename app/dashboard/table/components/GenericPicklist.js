@@ -37,7 +37,7 @@ import {
    value,
    currentField
   }) => {
-    const [currenValue, setCurrentValue] = useState(value)
+    const [currentValue, setCurrentValue] = useState(value)
     const [isOpen, setIsOpen] = useState(false)
     let areFieldsDirty = Object.keys(form.formState?.dirtyFields).length > 0
 
@@ -45,7 +45,7 @@ import {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
     <PopoverTrigger asChild>
-      <span>{currenValue ?? '-'}</span>
+      <span>{currentValue ?? '-'}</span>
 
     </PopoverTrigger>
     <PopoverContent>

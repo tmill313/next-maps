@@ -1,7 +1,6 @@
 
 'use client'
 import {useEffect, useState, useContext} from 'react'
-import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import getCustomerData from './getCustomerData';
@@ -16,7 +15,7 @@ const CustomerTable = ({isOpen, setIsOpen, filters, setFilters}) => {
 
     const [data, setData] = useState([])
     const [customColumns, setCustomColumns] = useState([])
-    const [ testColumns, setTestColumns] = useState([])
+    const [columns, setColumns] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [isRefreshTrigger, setIsRefreshTrigger] = useState(false)
     const supabase = createClientComponentClient();
@@ -27,7 +26,7 @@ const CustomerTable = ({isOpen, setIsOpen, filters, setFilters}) => {
         if(!currentUser?.fields) return
         console.log(currentUser)
         const newColumns = getColumns(currentUser, currentUser?.fields)
-        setTestColumns(newColumns)
+        setColumns(newColumns)
         getCustomerData(setData, setIsLoading, setCustomColumns, setIsRefreshTrigger, filters, currentUser)
         console.log(data)
     }, [supabase, isRefreshTrigger, filters])
@@ -36,7 +35,7 @@ const CustomerTable = ({isOpen, setIsOpen, filters, setFilters}) => {
     return (
         <div>
             <Spinner isLoading={isLoading} />
-            <DataTable filters={filters} setFilters={setFilters} setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={testColumns} data={data} />
+            <DataTable filters={filters} setFilters={setFilters} setIsRefreshTrigger={setIsRefreshTrigger} isOpen={isOpen} setIsOpen={setIsOpen} columns={newColumns} data={data} />
         </div>
       )
     }

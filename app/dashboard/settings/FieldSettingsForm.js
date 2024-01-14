@@ -13,6 +13,7 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Badge } from "@/components/ui/badge"
 
 
 
@@ -80,14 +81,18 @@ const FieldSettingsForm = ({fields, initialValues, validationSchema, profileId})
                             <div className="space-y-0.5">
                               <FormLabel>{accountField.label}</FormLabel>
                               <FormDescription>
-                                {accountField.type}
+                                {accountField?.type}
                               </FormDescription>
                             </div>
                             <FormControl>
+                                <div className="flex items-center justify-between">
+                            {!accountField?.updateable && <Badge className='mr-4'>Read only</Badge>}
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
+                                disabled={accountField?.type === 'reference' || accountField?.type === 'id'}
                               />
+                              </div>
                             </FormControl>
                           </FormItem>
                         )}}
