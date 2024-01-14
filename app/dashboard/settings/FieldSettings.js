@@ -8,6 +8,9 @@ import { Input } from '@/components/ui/input'
 import * as z from "zod"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
+  
+
+
 
 
 
@@ -119,7 +122,11 @@ const FieldSettings = () => {
     <div className='flex flex-col'>
         <div className='flex justify-between my-6'>
             <Input value={filter} onChange={e => setFilter(e.target.value)} placeholder='Filter fields' className='w-4/12'/>
-            <Button onClick={syncFields}>Sync</Button>
+
+                <Button onClick={syncFields}>Sync</Button>
+
+
+        
         </div>
     <FieldSettingsForm 
     {...formVals}
