@@ -18,23 +18,29 @@ const getCustomerData = async (setData, setIsLoading, setCustomColumns, setIsRef
     
 
           let CUSTOMER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+${joinedString}(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
-          if(filters.color) {
-            const { data: colorRows } = await supabase
-            .from("row_colors")
-            .select(`account_id`)
-            .eq("color_hex", filters?.color)
-            console.log(colorRows)
-            if(colorRows) {
-              let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
-              console.log(accountString)
-              let stringAddition = `+AND+Id+IN(${accountString})`
-              CUSTOMER_URL = `${CUSTOMER_URL}${stringAddition}`
-              console.log(CUSTOMER_URL)
 
-            }
-          }
-          if(filters.industry) {
-            CUSTOMER_URL = `${CUSTOMER_URL}+AND+Industry='${filters.industry}'`
+          for(const key in filters) {
+            if(filters[key] !== undefined) {
+            if(key === 'color') {
+              const { data: colorRows } = await supabase
+              .from("row_colors")
+              .select(`account_id`)
+              .eq("color_hex", filters?.color)
+              console.log(colorRows)
+              if(colorRows) {
+                let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
+                console.log(accountString)
+                let stringAddition = `+AND+Id+IN(${accountString})`
+                CUSTOMER_URL = `${CUSTOMER_URL}${stringAddition}`
+                console.log(CUSTOMER_URL)
+  
+              }
+            } else if(key === 'industry') {
+              CUSTOMER_URL = `${CUSTOMER_URL}+AND+Industry='${filters.industry}'`
+            } else {
+              const newString = `+AND+${key}='${filters[key]}'`
+              CUSTOMER_URL = `${CUSTOMER_URL}${newString}`
+            }}
           }
 
           const options = {
