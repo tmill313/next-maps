@@ -77,6 +77,7 @@ const ClientLayout = ({ children }) => {
   const [company, setCompany] = useState(null)
   const [salesforceAuth, setSalesforceAuth] = useState(null);
   const [industryPicklist, setIndustryPicklist] = useState([])
+  const [refresh, triggerRefresh] = useState(false)
 
   // This is used to get the user data from Supabase Auth (if logged in) => user ID is used to identify users in Crisp
   useEffect(() => {
@@ -149,7 +150,8 @@ const ClientLayout = ({ children }) => {
         salesforceAuth,
         industryPicklist,
         fields,
-        company
+        company,
+        setFields
       }}
       >
       {children}

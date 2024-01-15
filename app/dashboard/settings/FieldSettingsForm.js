@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge"
 
 
 
-const FieldSettingsForm = ({fields, initialValues, validationSchema, profile}) => {
+const FieldSettingsForm = ({fields, initialValues, validationSchema, profile, currentUser}) => {
     const supabase = createClientComponentClient()
 
 
@@ -29,16 +29,21 @@ const FieldSettingsForm = ({fields, initialValues, validationSchema, profile}) =
 
     const onSubmit = async (data) => {
         let body = {}
+        let fieldCopy = currentUser?.fields
         const dirtyFields = form.formState?.dirtyFields
         if(Object.keys(data).length > 0) {
             if(Object.keys(dirtyFields).length > 0) {
         for(const thing in data) {
             if(dirtyFields[thing]) {
                 body[thing] = data[thing]
+                console.log(thing)
+                fieldCopy?.filter(item => item.name === thing)?.map(field => field.is_active = data[thing])
             }
         }
+        console.log(fieldCopy)
         }
     }
+    console.log(body)
         const newBody = JSON.stringify(body);
         for (const key in body) {
 
@@ -59,6 +64,7 @@ const FieldSettingsForm = ({fields, initialValues, validationSchema, profile}) =
             </pre>
           ),
         })
+
       }
 if(!fields) return null
     return (

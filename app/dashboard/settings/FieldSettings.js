@@ -21,7 +21,7 @@ const getInputs = (array, companyId) => {
 
     let validationsFields = {};
 
-    array.map(field => {
+    array?.map(field => {
     
         initialValues[field.name] = field.is_active !== undefined && field.is_active !== null ? field.is_active : false
 
@@ -128,8 +128,9 @@ const FieldSettings = ({currentUser}) => {
         </div>
     <FieldSettingsForm 
     {...formVals}
+    currentUser={currentUser}
     profile={profile}
-    fields={fields.filter(d => filter === '' || d.label.toLowerCase().includes(filter.toLowerCase()))}
+    fields={fields?.filter(d => filter === '' || d.label.toLowerCase().includes(filter.toLowerCase()))}
     />
     </div>
   )
