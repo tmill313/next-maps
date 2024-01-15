@@ -14,6 +14,10 @@ import GenericInt from "./components/GenericInt"
 import GenericDatePicker from "./components/GenericDatePicker"
 import {formatISO} from 'date-fns'
 import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
+import { ArrowUpDown, ArrowDownIcon, ArrowUpIcon} from "lucide-react"
+
+
 
 const getColumns = (currentUser, fields) => {
 
@@ -23,7 +27,15 @@ const getColumns = (currentUser, fields) => {
           size: 170,
           header: ({ column }) => {
             return (
-              <span>{field.label}</span>
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                {field.label}
+                {column.getIsSorted() === "asc" && <ArrowUpIcon className="ml-2 h-4 w-4" />}
+                {column.getIsSorted() === "desc" && <ArrowDownIcon className="ml-2 h-4 w-4" />}
+                {!column.getIsSorted() && <ArrowUpDown className="ml-2 h-4 w-4" />}
+              </Button>
             )
           },
           cell: ({ row }) => {
