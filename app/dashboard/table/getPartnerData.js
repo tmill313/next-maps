@@ -17,22 +17,28 @@ const getPartnerData = async (setData, setIsLoading, customColumns, setCustomCol
     }
           let PARTNER_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+${joinedString}(Select+Id,MobilePhone,FirstName,LastName,Email+FROM+Contacts)+FROM+Account+WHERE+Id+IN(SELECT+AccountFromId+FROM+Partner)`
 
-          if(filters.color) {
-            const { data: colorRows } = await supabase
-            .from("row_colors")
-            .select(`account_id`)
-            .eq("color_hex", filters?.color)
-            console.log(colorRows)
-            if(colorRows) {
-              let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
-              console.log(accountString)
-              let stringAddition = `+AND+Id+IN(${accountString})`
-              PARTNER_URL = `${PARTNER_URL}${stringAddition}`
-
-            }
-          }
-          if(filters.industry) {
-            PARTNER_URL = `${PARTNER_URL}+AND+Industry='${filters.industry}'`
+          for(const key in filters) {
+            if(filters[key] !== undefined) {
+            if(key === 'color') {
+              const { data: colorRows } = await supabase
+              .from("row_colors")
+              .select(`account_id`)
+              .eq("color_hex", filters?.color)
+              console.log(colorRows)
+              if(colorRows) {
+                let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
+                console.log(accountString)
+                let stringAddition = `+AND+Id+IN(${accountString})`
+                PARTNER_URL = `${PARTNER_URL}${stringAddition}`
+                console.log(PARTNER_URL)
+  
+              }
+            } else if(key === 'industry') {
+              PARTNER_URL = `${PARTNER_URL}+AND+Industry='${filters.industry}'`
+            } else {
+              const newString = `+AND+${key}='${filters[key]}'`
+              PARTNER_URL = `${PARTNER_URL}${newString}`
+            }}
           }
 
           const options = {

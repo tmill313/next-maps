@@ -20,22 +20,28 @@ const getProspectData = async (setData, setIsLoading, customColumns, setCustomCo
           
           let PROSPECT_URL = `${salesforceAuth?.instance_url}/services/data/v59.0/query/?q=SELECT+${joinedString}(Select+Id,MobilePhone,FirstName,LastName,Title,Email+FROM+Contacts),+(Select+Id,isWon+FROM+Opportunities),+(Select+Id+FROM+Notes)+FROM+Account+WHERE+ownerId='${salesforceAuth?.user_id}'+AND+Id+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=false)+AND+Id+NOT+IN(SELECT+AccountId+FROM+Opportunity+WHERE+isWon=true)`
 
-          if(filters.color) {
-            const { data: colorRows } = await supabase
-            .from("row_colors")
-            .select(`account_id`)
-            .eq("color_hex", filters?.color)
-            console.log(colorRows)
-            if(colorRows) {
-              let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
-              console.log(accountString)
-              let stringAddition = `+AND+Id+IN(${accountString})`
-              PROSPECT_URL = `${PROSPECT_URL}${stringAddition}`
-
-            }
-          }
-          if(filters.industry) {
-            PROSPECT_URL = `${PROSPECT_URL}+AND+Industry='${filters.industry}'`
+          for(const key in filters) {
+            if(filters[key] !== undefined) {
+            if(key === 'color') {
+              const { data: colorRows } = await supabase
+              .from("row_colors")
+              .select(`account_id`)
+              .eq("color_hex", filters?.color)
+              console.log(colorRows)
+              if(colorRows) {
+                let accountString = colorRows.map(account => `'${account?.account_id}'`).join(', ')
+                console.log(accountString)
+                let stringAddition = `+AND+Id+IN(${accountString})`
+                PROSPECT_URL = `${PROSPECT_URL}${stringAddition}`
+                console.log(PROSPECT_URL)
+  
+              }
+            } else if(key === 'industry') {
+              PROSPECT_URL = `${PROSPECT_URL}+AND+Industry='${filters.industry}'`
+            } else {
+              const newString = `+AND+${key}='${filters[key]}'`
+              PROSPECT_URL = `${PROSPECT_URL}${newString}`
+            }}
           }
 
           const options = {
