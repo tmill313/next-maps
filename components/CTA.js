@@ -15,10 +15,10 @@ const CTA = () => {
       <div className="relative hero-content text-center text-neutral-content p-8">
         <div className="flex flex-col items-center max-w-xl p-8 md:p-0">
           <h2 className="font-bold text-3xl md:text-5xl tracking-tight mb-8 md:mb-12">
-            Make your maps. Let em cook.
+            Make your territory maps. Let em cook.
           </h2>
           <p className="text-lg opacity-80 mb-12 md:mb-16">
-            Don&apos;t waste time not letting your maps cook.
+            Don&apos;t waste time not letting your territory maps.
           </p>
 
           <ButtonLead />

@@ -69,7 +69,7 @@ const FilterPicklist = ({picklist, label, name, form}) => {
                   />
                   <CommandEmpty>{`No ${label} found.`}</CommandEmpty>
                   <CommandGroup>
-                  <ScrollArea className="h-[165px] w-[190px]">
+                  <ScrollArea className="h-[165px] w-[240px]">
                     {picklist.map((item) => {
                       return (
                       <CommandItem

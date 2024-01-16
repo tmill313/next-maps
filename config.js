@@ -21,48 +21,52 @@ const config = {
     // Create multiple plans in your Stripe dashboard, then add them here. You can add as many plans as you want, just make sure to add the priceId
     plans: [
       {
+        isFeatured: true,
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
         priceId:
           process.env.NODE_ENV === "development"
             ? "price_1ORo19D7etE5Yet8mHDMhu96"
             : "price_1ORo19D7etE5Yet8mHDMhu96",
         //  REQUIRED - Name of the plan, displayed on the pricing page
-        name: "Starter",
+        name: "Yearly",
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
-        description: "Perfect for small projects",
+        description: "Save over 25% by choosing to pay yearly.",
         // The price you want to display, the one user will be charged on Stripe.
-        price: 79,
+        price: 59,
         // If you have an anchor price (i.e. $29) that you want to display crossed out, put it here. Otherwise, leave it empty
-        priceAnchor: 99,
+        priceAnchor: 79,
         features: [
           {
-            name: "NextJS boilerplate",
+            name: "1 month free trial 🥳",
           },
-          { name: "User oauth" },
-          { name: "Database" },
-          { name: "Emails" },
+          {
+            name: "Map visualization",
+          },
+          { name: "Inline edits" },
+          { name: "Link/update Salesforce" },
+          { name: "Filter/sort and anything else you can imagine." },
         ],
       },
       {
         // This plan will look different on the pricing page, it will be highlighted. You can only have one plan with isFeatured: true
-        isFeatured: true,
         priceId:
           process.env.NODE_ENV === "development"
             ? "price_1O5KtcAxyNprDp7iftKnrrpw"
             : "price_456",
-        name: "Advanced",
-        description: "You need more power",
-        price: 99,
-        priceAnchor: 149,
+        name: "Monthly",
+        description: "Month to month. Cancel any time.",
+        price: 79,
+        priceAnchor: 99,
         features: [
           {
-            name: "NextJS boilerplate",
+            name: "1 month free trial 🥳",
           },
-          { name: "User oauth" },
-          { name: "Database" },
-          { name: "Emails" },
-          { name: "1 year of updates" },
-          { name: "24/7 support" },
+          {
+            name: "Map visualization",
+          },
+          { name: "Inline edits" },
+          { name: "Link/update Salesforce" },
+          { name: "Filter/sort and anything else you can imagine." },
         ],
       },
     ],
