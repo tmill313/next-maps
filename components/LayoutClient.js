@@ -123,7 +123,6 @@ const ClientLayout = ({ children }) => {
       try {
       industryRes = await axios.get(industryUrl, options);
       } catch (error) {
-        checkError(error)
         console.log(error)
       }
       let industryPick = industryRes?.data?.fields.filter(ind => ind.name === 'Industry')[0]?.picklistValues.filter(item => item.active === true)

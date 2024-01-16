@@ -15,7 +15,7 @@ export default async function LayoutPrivate({ children }) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
+  
   if (!session) {
     redirect(config.auth.loginUrl);
   }
