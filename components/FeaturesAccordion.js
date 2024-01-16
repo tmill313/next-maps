@@ -16,7 +16,7 @@ const features = [
     description:
       "Visualize your data on smooth and crispy as hell maps.",
     // type: "video",
-    // path: "https://d3m8mk7e1mf7xn.cloudfront.net/app/newsletter.webm",
+    // path: "components/Sales Territory Planning Made Easy.mp4",
     // format: "video/webm",
     type: "image",
     path: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80",
