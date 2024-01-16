@@ -33,7 +33,7 @@ const Hero = () => {
 
         {/* <TestimonialsAvatars priority={true} /> */}
       </div>
-      <div className="lg:w-full">
+      <div className="w-full">
       <div style={{position: 'relative', paddingBottom: '56.25%', height: '0'}}><iframe src="https://www.loom.com/embed/c41a5f0e6f6742f6b39c70eec1456572?sid=4a8f3b4a-2c92-409b-af31-9e7013653d96" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style={{position: 'absolute', top: '0', left: '0', width: '100%', height: '100%'}}></iframe></div>
       </div>
     </section>
